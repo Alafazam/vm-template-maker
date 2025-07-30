@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+    <xsl:output encoding="UTF-8" indent="yes" method="xml" standalone="no" omit-xml-declaration="no"/>
+    <xsl:template match="data">
+        <fo:root language="EN" font-size="8pt" font-family="arial">
+            <fo:layout-master-set>
+                <fo:simple-page-master master-name="page-master" page-height="152.4mm" page-width="101.6mm" margin-top="3mm" margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
+                    <fo:region-body region-name="body"/>
+                    <fo:region-before region-name="header" extent="5mm" margin-bottom="0mm" margin-top="0mm" display-align="before" precedence="true"/>
+                    <fo:region-after region-name="footer" extent="5mm" margin-bottom="0mm" margin-top="0mm"/>
+                </fo:simple-page-master>
+            </fo:layout-master-set>
+            <fo:page-sequence master-reference="page-master">
+                <fo:static-content flow-name="header">
+                    <fo:block></fo:block>
+                </fo:static-content>
+                <fo:static-content flow-name="footer">
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0.5px"/>
+                    </fo:block>
+                    <!-- https://stackoverflow.com/questions/391759/xsl-fo-inline-alignment -->
+                    <fo:block text-align-last="center" padding-before="2pt">
+                        Powered by Increff®
+                        <fo:leader leader-pattern="space"/>
+                        #set( $timestamp = $data.templateAttributesData.box_timestamp)
+                        #if($timestamp)
+                        $date.format('yyyy-M-d HH:mm',$timestamp)
+                        <fo:leader leader-pattern="space"/>
+                        #end
+                    </fo:block>
+                </fo:static-content>
+                <fo:flow flow-name="body" reference-orientation="0">
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(30)"/>
+                        <fo:table-column column-width="proportional-column-width(70)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black"> 
+                                <fo:table-cell>
+                                    <fo:block></fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt" display-align="after">
+                                    <fo:block>
+                                        <fo:external-graphic content-height="10mm" content-width="32mm" scaling="uniform" padding-left="2pt" src="url('classpath:com/nextscm/commons/images/increff_image.png')"></fo:external-graphic>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="10pt" text-align="center" border-top="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>#writeBarcodeWithoutText($data.awbNo)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row font-size="8pt" text-align="center" border-bottom="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>#writeString($data.awbNo)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(50)"/>
+                        <fo:table-column column-width="proportional-column-width(50)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell border-right="solid 0.5px black" padding="2pt">
+                                    <fo:block>Order No : #writeString($data.orderNo)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>Order Date : #writeDateTime($data.orderDate)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>Shipment Date : #writeDateTime($data.invoiceDate)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(50)"/>
+                        <fo:table-column column-width="proportional-column-width(50)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt" border-right="solid 0.5px black">
+                                    <fo:block>Payment : #writePaymentMethod($data.paymentType)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>Cash to be Collected : #writeString($data.codAmount) #writeString($data.currencyCode)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table>
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>#writeFromAddress($data.fromAddress)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table>
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>#writeToAddress($data.toAddress)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(33)"/>
+                        <fo:table-column column-width="proportional-column-width(33)"/>
+                        <fo:table-column column-width="proportional-column-width(34)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt" border-right="solid 0.5px black">
+                                    <fo:block>Order Grand Total : #writeString($data.orderValue) #writeString($data.currencyCode)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell padding="2pt" border-right="solid 0.5px black">
+                                    <fo:block>Total Weight : #writeString($data.shipmentWeight)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>Number of Pieces : #writeString($data.boxSerialNo) of #writeString($data.totalBoxCount)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>Transporter Name : #writeString($data.transporterName)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table>
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding = "2pt">
+                                    <fo:block>
+                                        #set($complete_item_string = "")
+                                        #set($uniqueItemNames = [])
+                                        #set($is_first_name = true)
+                                        #foreach($item in $data.orderLineItemList)
+                                            #if( ! $uniqueItemNames.contains( $item.skuName )  )
+                                                #if( $uniqueItemNames.add($item.skuName) ) #end
+                                                ##note the if above is to trap a "true" return - may not be required
+                                                #if($is_first_name)
+                                                    #set($complete_item_string = "$item.skuName")
+                                                #else
+                                                    #set($complete_item_string = "$complete_item_string, $item.skuName")
+                                                #end
+                                                #set($is_first_name = false)
+                                            #end
+                                        #end
+                                        Item Names : #writeString($complete_item_string)
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(100)"/>
+                        <fo:table-body>
+                            <fo:table-row font-size="10pt" text-align="center" border-top="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>#writeBarcodeWithoutText($data.orderNo)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row font-size="8pt" text-align="center" border-bottom="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
+                                <fo:table-cell>
+                                    <fo:block>#writeString($data.orderNo)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                </fo:flow>
+            </fo:page-sequence>
+        </fo:root>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+#macro( writeString $str)
+#if($str)
+<![CDATA[$str]]>
+#end
+#end
+
+#macro ( writePaymentMethod $str)
+#if($str)
+#if($str == "COD")
+Not Paid
+#else
+Paid
+#end
+#end
+#end
+
+#macro( writeFromAddress $add)
+#if($add)
+<fo:block>From/Sender : #writeString($add.firstName) #writeString($add.middleName) #writeString($add.lastName)</fo:block>
+<fo:block>Address: #writeString($add.street1), #writeString($add.street2), #writeString($add.street3), #writeString($add.city)</fo:block>
+<fo:block>Phone : #writeString($add.phone)</fo:block>
+#end
+#end
+
+#macro( writeToAddress $add)
+#if($add)
+<fo:block>To/Recipient : #writeString($add.firstName) #writeString($add.middleName) #writeString($add.lastName)</fo:block>
+<fo:block>Address: #writeString($add.street1), #writeString($add.street2), #writeString($add.street3), #writeString($add.city)</fo:block>
+<fo:block>Phone : #writeString($add.phone)</fo:block>
+#end
+#end
+
+#macro( writeDateTime $dateTime $format)
+#if($dateTime)
+$date.format('dd/MM/yyyy', $dateTime)
+#end
+#end
+
+#macro( writeBarcodeWithoutText $str)
+  #if($str.toString().contains("&"))
+  #set( $str = $str.replace("&", "&amp;") )
+  #end
+  #if($str.toString().contains("<"))
+  #set( $str = $str.replace("<", "&lt;") )
+  #end
+  #if($str.toString().contains(">"))
+  #set( $str = $str.replace(">", "&gt;") )
+  #end
+  #if($str.toString().contains("'"))
+  #set( $str = $str.replace("'", "&apos;") )
+  #end
+  #if($str.toString().contains('"'))
+  #set( $str = $str.replace('"', "&quot;") )
+  #end
+  #if($str)
+<fo:instream-foreign-object>
+<bc:barcode xmlns:bc="http://barcode4j.krysalis.org/ns" message="$str">
+<bc:code128>
+  <bc:height>10mm</bc:height>
+  <human-readable>
+    <placement>none</placement>
+  </human-readable>
+</bc:code128>
+</bc:barcode>
+</fo:instream-foreign-object>
+  #end
+  #end

@@ -1,0 +1,55 @@
+{
+  "shipment": {
+    "trackingId": "SHIP987654321",
+    "shipmentDate": "Mon Jan 15 10:30:45 IST 2024",
+    "carrierName": "Express Logistics"
+  },
+  "order": {
+    "orderId": "ORD123456789",
+    "orderDate": "Mon Jan 14 14:22:33 IST 2024"
+  },
+  "recipient": {
+    "name": "John Doe",
+    "phone": "9876543210",
+    "address": {
+      "line1": "123 Main Street",
+      "line2": "Apartment 4B",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "pincode": "560001"
+    }
+  },
+  "sender": {
+    "name": "Fashion Store",
+    "warehouseId": "WH001",
+    "address": {
+      "line1": "456 Commerce Avenue",
+      "city": "Bangalore",
+      "state": "Karnataka",
+      "country": "India",
+      "pincode": "560002"
+    }
+  },
+  "packageDetails": {
+    "weight": "1.5 kg",
+    "dimensions": "30cm x 20cm x 10cm",
+    "packageCount": "1 of 1",
+    "shippingClass": "Standard"
+  },
+  "items": [
+    {
+      "sku": "SKU-001-ABC",
+      "name": "Premium T-Shirt",
+      "quantity": 2,
+      "barcode": "8901234567890"
+    },
+    {
+      "sku": "SKU-002-XYZ",
+      "name": "Denim Jeans",
+      "quantity": 1,
+      "barcode": "8901234567891"
+    }
+  ],
+  "specialInstructions": "Handle with care"
+} 

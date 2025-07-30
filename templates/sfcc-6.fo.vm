@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+    <xsl:output encoding="UTF-8" indent="yes" method="xml"
+                standalone="no" omit-xml-declaration="no"/>
+
+
+    <!-- CSS styles-->
+    <xsl:attribute-set name="small">
+        <xsl:attribute name="font-size">12pt</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="little-bold">
+        <xsl:attribute name="font-size">9pt</xsl:attribute>
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    </xsl:attribute-set>
+    <xsl:attribute-set name="small-bold">
+        <xsl:attribute name="font-size">12pt</xsl:attribute>
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-lrt">
+        <xsl:attribute name="border-left">solid 1px black</xsl:attribute>
+        <xsl:attribute name="border-right">solid 1px black</xsl:attribute>
+        <xsl:attribute name="border-top">solid 1px black</xsl:attribute>
+        <xsl:attribute name="padding">1mm</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-lr">
+        <xsl:attribute name="border-left">solid 1px black</xsl:attribute>
+        <xsl:attribute name="border-right">solid 1px black</xsl:attribute>
+        <xsl:attribute name="padding">1mm</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-lrb">
+        <xsl:attribute name="border-left">solid 1px black</xsl:attribute>
+        <xsl:attribute name="border-right">solid 1px black</xsl:attribute>
+        <xsl:attribute name="border-bottom">solid 1px black</xsl:attribute>
+        <xsl:attribute name="padding">1mm</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-r">
+        <xsl:attribute name="border-right">solid 1px black</xsl:attribute>
+        <xsl:attribute name="padding">1mm</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-l">
+            <xsl:attribute name="border-left">solid 1px black</xsl:attribute>
+            <xsl:attribute name="padding">1mm</xsl:attribute>
+        </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-lrtb">
+        <xsl:attribute name="border">solid 1px black</xsl:attribute>
+        <xsl:attribute name="padding">1mm</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="large">
+        <xsl:attribute name="font-size">15pt</xsl:attribute>
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-t">
+        <xsl:attribute name="border-top">solid 1px black</xsl:attribute>
+        <xsl:attribute name="padding">2mm</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:attribute-set name="border-lb">
+        <xsl:attribute name="padding">1mm</xsl:attribute>
+        <xsl:attribute name="border-left">solid 1px black</xsl:attribute>
+        <xsl:attribute name="border-bottom">solid 1px black</xsl:attribute>
+    </xsl:attribute-set>
+
+    <xsl:template match="data">
+
+        <fo:root language="EN" font-size="14pt" font-family="arial">
+
+            <fo:layout-master-set>
+                <fo:simple-page-master master-name="page-master"
+                                       page-height="270mm" page-width="250mm" margin-top="15mm"
+                                       margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
+                    <fo:region-body region-name="body" margin-top="100mm" margin-bottom="15mm"/>
+                    <fo:region-before region-name="header"
+                                      margin-bottom="3mm" margin-top="3mm"/>
+                    display-align="before" precedence="true" />
+                    <fo:region-after region-name="footer" extent="33mm"
+                                     margin-bottom="3mm" margin-top="3mm"/>
+                </fo:simple-page-master>
+            </fo:layout-master-set>
+
+            <fo:page-sequence master-reference="page-master">
+
+                <fo:static-content flow-name="header">
+
+                    <fo:table table-layout="fixed" width="100%" border-bottom="solid 0.5px black">
+                        <fo:table-body>
+                            <fo:table-row>
+                            <fo:table-cell padding-left="6mm" padding-right="3mm" number-rows-spanned="2" text-align="right" >
+                               <fo:block>
+                                    <fo:external-graphic content-height="30mm"
+                                           width="100%"
+                                           content-width="scale-to-fit"
+                                           scaling="uniform"
+                                           src="url('$data.logoUrl')">
+                                    </fo:external-graphic>
+                               </fo:block>
+                            </fo:table-cell>
+                               <fo:table-cell number-columns-spanned="2" text-align="center">
+                                    <fo:block xsl:use-attribute-sets="small-bold">TAX INVOICE</fo:block>
+                                    <fo:block>Puma Sports India Pvt Ltd</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.fromAddress.line1)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.fromAddress.line2)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.fromAddress.line3)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.fromAddress.city), #writeString($data.fromAddress.state) #writeString($data.fromAddress.zip)</fo:block>
+                                    <fo:block>GSTIN : $data.fromTaxId</fo:block>
+                                </fo:table-cell>
+                               <fo:table-cell text-align="right" padding-right="6mm">
+                                    <fo:block><fo:external-graphic content-height="30mm"
+                                        width="100%"
+                                        content-width="scale-to-fit"
+                                        scaling="uniform"
+                                        src="url('classpath:com/nextscm/commons/images/increff_image.png')">
+                                    </fo:external-graphic></fo:block>
+                                    </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block></fo:block>
+                                ##                                    <fo:block xsl:use-attribute-sets="large">RELIANCE RETAIL LIMITED</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                        </fo:table-body>
+                    </fo:table>
+
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-body>
+
+                            <fo:table-row>
+                                <fo:table-cell xsl:use-attribute-sets="small-bold" text-align="center" padding="3mm" number-columns-spanned="2">
+                                    <fo:block>Order Number :$data.channelOrderNo / $data.orderNo</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row >
+                                <fo:table-cell padding-bottom="3mm">
+                                   <fo:block xsl:use-attribute-sets="small-bold">Invoice No:</fo:block>
+                                   <fo:block
+                                           xsl:use-attribute-sets="small">$data.orderNo
+                                   </fo:block>
+
+                                </fo:table-cell>
+                                <fo:table-cell padding-bottom="3mm">
+                                   <fo:block xsl:use-attribute-sets="small-bold">Invoice Date:</fo:block>
+                                   <fo:block
+                                           xsl:use-attribute-sets="small">$date.format('yyyy-MM-dd',$data.invoiceOrStockTransferTime)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row number-rows-spanned="2">
+                                <fo:table-cell number-columns-spanned="2">
+                                   <fo:block xsl:use-attribute-sets="small-bold">         </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                        </fo:table-body>
+                    </fo:table>
+
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell >
+                                    <fo:block xsl:use-attribute-sets="small-bold">Billing Address:</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small" padding-right="10mm">
+                                            #writeString($data.billingAddress.name)</fo:block>
+                                    <fo:block
+                                            xsl:use-attribute-sets="small">#writeString($data.billingAddress.line1)</fo:block>
+                                    <fo:block
+                                            xsl:use-attribute-sets="small">#writeString($data.billingAddress.line2)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.billingAddress.line3)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.billingAddress.state) #writeString($data.billingAddress.country)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.billingAddress.zip)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.billingAddress.email)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">
+                                        <fo:inline xsl:use-attribute-sets="small-bold">Place of Supply: </fo:inline>#writeString($data.placeOfSupply)
+                                    </fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block xsl:use-attribute-sets="small-bold">Shipping Address:</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small" padding-right="15mm">
+                                            #writeString($data.shippingAddress.name)</fo:block>
+                                    <fo:block
+                                            xsl:use-attribute-sets="small">#writeString($data.shippingAddress.line1)</fo:block>
+                                    <fo:block
+                                            xsl:use-attribute-sets="small">#writeString($data.shippingAddress.line2)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.shippingAddress.line3)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.shippingAddress.state) #writeString($data.shippingAddress.country)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.shippingAddress.zip)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.shippingAddress.email)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                </fo:static-content>
+
+                <fo:static-content flow-name="footer">
+                    <fo:table width="100%" table-layout="fixed">
+                        <fo:table-body>
+                            <fo:table-row>
+
+                                <fo:table-cell>
+                                    <fo:block></fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                </fo:static-content>
+
+                <fo:flow flow-name="body" border-collapse="collapse"
+                         reference-orientation="0">
+
+
+                    <fo:table width="100%" table-layout="fixed">
+                        <fo:table-column column-number="1" column-width="11%"/> <!--Product Description -->
+                        <fo:table-column column-number="2" column-width="11%"/><!--HSN -->
+                        <fo:table-column column-number="3" column-width="11%"/><!--SKU -->
+                        <fo:table-column column-number="4" column-width="6%"/><!--Quantity -->
+                        <fo:table-column column-number="5" column-width="6%"/><!--Mrp Rate -->
+                        <fo:table-column column-number="6" column-width="6%"/><!--Total -->
+                        <fo:table-column column-number="7" column-width="6%"/><!--Discount On Order -->
+                        <fo:table-column column-number="8" column-width="6%"/><!--Total Discount On Item -->
+                        <fo:table-column column-number="9" column-width="7%"/><!--Taxable Value -->
+                        <fo:table-column column-number="10" column-width="5%"/><!--CGST Rate-->
+                        <fo:table-column column-number="11" column-width="5%"/><!--CGST Amt. -->
+                        <fo:table-column column-number="12" column-width="5%"/><!--SGST value Rate -->
+                        <fo:table-column column-number="13" column-width="5%"/><!--SGST value Amt. -->
+                        <fo:table-column column-number="14" column-width="5%"/><!--IGST value Rate -->
+                        <fo:table-column column-number="15" column-width="5%"/><!--IGST value Amt. -->
+                        <fo:table-header  border-bottom="solid 1px black">
+
+                            <fo:table-row xsl:use-attribute-sets="little-bold">
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Product Description</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>HSN Code</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>SKU</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Quantity</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Mrp Rate (per item)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Total</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Discount On Order</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Total Discount On Item</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-rows-spanned="2">
+                                    <fo:block>Taxable Value</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="2">
+                                    <fo:block>CGST</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="2">
+                                    <fo:block>SGST</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="2">
+                                    <fo:block>IGST</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row xsl:use-attribute-sets="little-bold">
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb">
+                                    <fo:block>Rate</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb">
+                                    <fo:block>Amt.</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb">
+                                    <fo:block>Rate</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb">
+                                    <fo:block>Amt.</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb">
+                                    <fo:block>Rate</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb">
+                                    <fo:block>Amt.</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            #foreach($item in $data.itemLines)
+                            <fo:table-row xsl:use-attribute-sets="little-bold">
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeString($item.itemName) - #writeString($item.size)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeString($item.hsnId)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeString($item.vendorSku)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>$item.quantity</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.mrp)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.actualSellingPriceTotal)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.itemMetaData.get('discountOnOrder'))</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.itemMetaData.get('discountOnItem'))</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.baseSellingPriceTotal)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeCgstSgstTaxRate3($item, $data.fromAddress.state, $data.shippingAddress.state)%</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.cgstAmount)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeCgstSgstTaxRate3($item, $data.fromAddress.state, $data.shippingAddress.state)%</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.sgstAmount)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeIgstTaxRate3($item, $data.fromAddress.state, $data.shippingAddress.state)%</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($item.igstAmount)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            #end
+
+
+                            <fo:table-row xsl:use-attribute-sets="little-bold">
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="5">
+                                    <fo:block text-align="right">TOTAL</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($data.finalTotalAmount)</fo:block> #TODO: subtract discounts
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($data.invoiceMetaData.get('discountOnOrder'))</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($data.invoiceMetaData.get('discountOnItem'))</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" >
+                                    <fo:block>#writeRoundedNumber($data.finalBaseAmount)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="2">
+                                    <fo:block>#writeRoundedNumber($data.totalCgstAmount)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="2">
+                                    <fo:block>#writeRoundedNumber($data.totalSgstAmount)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-lrtb" number-columns-spanned="2">
+                                    <fo:block>#writeRoundedNumber($data.totalIgstAmount)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row >
+                                <fo:table-cell xsl:use-attribute-sets="border-l" number-columns-spanned="13">
+                                    <fo:block text-align="right">Gift  Voucher/Promo Code :</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-r" number-columns-spanned="2">
+                                    <fo:block>#writeRoundedNumber($data.invoiceMetaData.get('couponDiscount'))</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row >
+                                <fo:table-cell xsl:use-attribute-sets="border-l" number-columns-spanned="13">
+                                    <fo:block text-align="right">Credits :</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-r" number-columns-spanned="2">
+                                    <fo:block>#writeRoundedNumber($data.storeCredits)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row >
+                                <fo:table-cell xsl:use-attribute-sets="border-l" number-columns-spanned="13">
+                                    <fo:block text-align="right">Grand Total :</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="border-r" number-columns-spanned="2">
+                                    <fo:block>#writeRoundedNumber($data.finalTotalAmount)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                        </fo:table-header>
+
+
+                        <fo:table-body >
+                            <fo:table-row>
+                                <fo:table-cell text-align="left" padding-top="3mm" padding-bottom="3mm" number-columns-spanned="11" xsl:use-attribute-sets="border-l">
+                                    <fo:block xsl:use-attribute-sets="large"> #writeString($data.invoiceMetaData.get('cashOrPaid')) </fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.paymentInfo.paymentGateway) #writeString($data.paymentInfo.mode)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.paymentInfo.transactionId)</fo:block>
+                                    <fo:block xsl:use-attribute-sets="small">#writeString($data.paymentInfo.bankDetails)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="center" number-columns-spanned="4" xsl:use-attribute-sets="small border-lrb">
+                                <fo:block><fo:external-graphic content-height="25mm"
+                                        width="100%"
+                                        content-width="scale-to-fit"
+                                        scaling="uniform"
+                                        src="url('$data.signatureUrl')">
+                                    </fo:external-graphic>
+                                </fo:block>
+                            </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row>
+                                <fo:table-cell text-align="left" number-columns-spanned="11" padding-bottom="3mm" xsl:use-attribute-sets="small border-lb">
+                                    <fo:block> Amount to Be Collected : #writeRoundedNumber($data.invoiceMetaData.get('cashToBeCollected'))</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="center" padding-bottom="3mm" xsl:use-attribute-sets="small border-lrb" number-columns-spanned="4" >
+                                    <fo:block> Authorised Signatory</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:block id="end"/>
+                </fo:flow>
+            </fo:page-sequence>
+        </fo:root>
+    </xsl:template>
+</xsl:stylesheet>
+
+#macro (writeIgstTaxRate3 $itemData $fromState $toState)
+    #set ($taxRate = $itemData.igstRate)
+    #if (!$fromState.equals($toState) && $itemData.actualSellingPriceTotal.equals(0.00))
+        #if ($itemData.taxRule.equals("GST_0"))
+            #set ($taxRate = 0.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_3"))
+            #set ($taxRate = 3.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_5"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_12"))
+            #set ($taxRate = 12.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_18"))
+            #set ($taxRate = 18.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_28"))
+            #set ($taxRate = 28.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_APPAREL"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_FOOTWEAR"))
+            #set ($taxRate = 12.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_5_18"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("VAT_5"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("VAT_15"))
+            #set ($taxRate = 15.0)
+        #end
+    #end
+    #writeRoundedNumber($taxRate)
+#end
+
+#macro (writeCgstSgstTaxRate3 $itemData $fromState $toState)
+    #set ($taxRate = $itemData.cgstRate)
+    #if ($fromState.equals($toState) && $itemData.actualSellingPriceTotal.equals(0.00))
+        #if ($itemData.taxRule.equals("GST_0"))
+            #set ($taxRate = 0.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_3"))
+            #set ($taxRate = 3.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_5"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_12"))
+            #set ($taxRate = 12.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_18"))
+            #set ($taxRate = 18.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_28"))
+            #set ($taxRate = 28.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_APPAREL"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_FOOTWEAR"))
+            #set ($taxRate = 12.0)
+        #end
+        #if ($itemData.taxRule.equals("GST_5_18"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("VAT_5"))
+            #set ($taxRate = 5.0)
+        #end
+        #if ($itemData.taxRule.equals("VAT_15"))
+            #set ($taxRate = 15.0)
+        #end
+        #set ($taxRate = $math.div($taxRate,2))
+    #end
+    #writeRoundedNumber($taxRate)
+#end
+
+#macro( writeRoundedNumber $number)
+    #writeString($math.roundTo(2, $number))
+#end
+
+#macro( writeString $str)
+#if($str)
+	<![CDATA[$str]]>
+#end
+#end

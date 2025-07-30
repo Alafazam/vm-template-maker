@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0"
+                xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml"
+              standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root language="EN" font-size="8pt" font-family="arial">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master"
+                               page-height="297mm" page-width="210mm" margin-top="5mm"
+                               margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
+
+          <fo:region-body region-name="body" background-image="url(#writeImageUrl($data.invoiceCancelled))"
+                          background-color="transparent" fox:background-image-width="200mm"
+                          fox:background-image-height="296mm"/>
+          <fo:region-before region-name="header" extent="5mm"
+                            margin-bottom="5mm" margin-top="5mm"/>
+          display-align="before" precedence="true" />
+          <fo:region-after region-name="footer" extent="5mm"
+                           margin-bottom="5mm" margin-top="5mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+
+        <fo:static-content flow-name="header">
+          <fo:block>
+          </fo:block>
+        </fo:static-content>
+
+        <fo:static-content flow-name="footer">
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule"
+                       rule-thickness="0.5px"/>
+          </fo:block>
+          <fo:table table-layout="fixed" width="100%">
+              <fo:table-body>
+                  <fo:table-row>
+                      <fo:table-cell padding-after="0pt">
+                          <fo:block>
+                            Page
+                            <fo:page-number/>
+                            (This is a system generated document and doesn't need signature)
+                          </fo:block>
+                       </fo:table-cell>
+                       <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt"
+                                                                      display-align="after">
+                           <fo:block>Original for Recipient</fo:block>
+                       </fo:table-cell>
+                   </fo:table-row>
+               </fo:table-body>
+           </fo:table>
+        </fo:static-content>
+
+                <fo:flow flow-name="body" border-collapse="collapse"
+                         reference-orientation="0">
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell padding-after="0pt">
+                                    <fo:block>
+                                        <fo:external-graphic content-height="10mm"
+                                                             content-width="32mm"
+                                                             scaling="uniform"
+                                                             padding-left="2pt"
+                                                             src="url('$data.logoUrl')">
+                                        </fo:external-graphic>
+                                    </fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt"
+                                               display-align="after" font-weight="bold">
+                                    <fo:block>COMMERCIAL INVOICE</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule"
+                                   rule-thickness="0.5px"/>
+                    </fo:block>
+                    <!-- INVOICE INFORMATION -->
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(50)"/>
+                        <fo:table-column column-width="proportional-column-width(50)"/>
+                      
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block>Invoice #: #writeString($data.invoiceOrStockTransferNo)</fo:block>
+                                    <fo:block>Time: #writeDateTime($data.invoiceOrStockTransferTime)</fo:block>
+                                    <fo:block>Currency: #writeString($data.currency)</fo:block>
+                                    #if( $data.invoiceMetaData.containsKey("incoTerm") )
+                                      <fo:block>#writeString("Inco Term") : #writeString($data.invoiceMetaData.get("incoTerm"))</fo:block>
+                                    #end  
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule"
+                                   rule-thickness="0px"/>
+                    </fo:block>
+
+          <!-- ADDRESS & TAX -->
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(10)"/>
+            <fo:table-column column-width="proportional-column-width(30)"/>
+            <fo:table-column column-width="proportional-column-width(30)"/>
+            <fo:table-column column-width="proportional-column-width(30)"/>
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>  SHIP FROM </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>  BILL TO  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>  SHIP TO  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>Party Name : </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeString($data.fromPartyName)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeString($data.toPartyName)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                   <fo:block>#writeString($data.shippingAddress.name)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+            
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>Address : </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeFromAddressNvidia($data)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeBillingAddressNvidia($data)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeShippingAddressNvidia($data)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+
+              <fo:table-row border="solid 0.5px black">
+                    <fo:table-cell>
+                        <fo:block>Email : </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                        <fo:block>#writeEmail($data.fromAddress)</fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                        <fo:block>#writeEmail($data.billingAddress)</fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                        <fo:block>#writeEmail($data.shippingAddress)</fo:block>
+                    </fo:table-cell>
+              </fo:table-row>
+
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block></fo:block>
+          <fo:block></fo:block>
+
+          <!-- LINE ITEMS -->
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule"
+                       rule-thickness="0px"/>
+            Invoice Items
+          </fo:block>
+
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-column column-number="1" column-width="3%"/> <!--S.No -->
+            <fo:table-column column-number="2" column-width="20%"/> <!--Part No. -->
+            <fo:table-column column-number="3" column-width="20%"/><!--Description -->
+            <fo:table-column column-number="4" column-width="6%"/><!--COO-->
+            <fo:table-column column-number="5" column-width="6%"/><!--HS CODE-->
+            <fo:table-column column-number="6" column-width="4%"/><!--Qty-->
+            <fo:table-column column-number="7" column-width="9%"/><!--Weight-->
+            <fo:table-column column-number="8" column-width="9%"/><!--Unit Price-->
+            <fo:table-column column-number="9" column-width="10%"/><!--Total Price-->
+            <fo:table-column column-number="10" column-width="13%"/><!--BOE Ref-->
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>L/N</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Part No.</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Description</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>COO</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>HS CODE</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Qty</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Weight KGS</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Unit Price</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Total Price</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>BOE REF</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              #foreach($item in $data.itemLines)
+                <fo:table-row border="solid 0.5px black">
+                  <fo:table-cell>
+                    <fo:block>$foreach.count</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>#writeString($item.channelSku)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>#writeString($item.itemName)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    #if( $item.itemMetaData.containsKey("coo") )
+                      <fo:block>#writeString($item.itemMetaData.get("coo"))</fo:block>
+                    #end 
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    #if( $item.itemMetaData.containsKey("hsCode") )
+                      <fo:block>#writeString($item.itemMetaData.get("hsCode"))</fo:block>
+                    #end
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>#writeString($item.quantity)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>$math.roundTo(2, $item.weight)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>$math.roundTo(2, $item.actualSellingPricePerUnit)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>$math.roundTo(2, $item.actualSellingPriceTotal)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    #if( $item.itemMetaData.containsKey("boeRef") )
+                      <fo:block>#writeString($item.itemMetaData.get("boeRef"))</fo:block>
+                    #end 
+                  </fo:table-cell>
+                </fo:table-row>
+              #end
+
+              
+
+              <!-- Final Total in words -->
+                <fo:table-row border="solid 0.5px black" font-weight="bold">
+                  <fo:table-cell>
+                    <fo:block></fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block></fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-colums-spanned="7">
+                    <fo:block>Total</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>USD</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>$data.finalTotalAmount</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+
+
+            </fo:table-body>
+          </fo:table>
+          
+          <fo:block>
+              <fo:leader leader-length="100%" leader-pattern="rule"
+                          rule-thickness="0px"/>
+          </fo:block>
+
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-column column-number="1" column-width="15%"/> <!--No. of packages-->
+            <fo:table-column column-number="2" column-width="15%"/> <!--Length-->
+            <fo:table-column column-number="3" column-width="15%"/> <!--Heigth-->
+            <fo:table-column column-number="4" column-width="15%"/> <!--Width-->
+            <fo:table-column column-number="5" column-width="20%"/> <!--Gross Weight -->
+            <fo:table-column column-number="6" column-width="20%"/> <!--Vol. Weight-->
+
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>No. of packages</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Length</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Heigth</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Width</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Gross Weight</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Vol Weight</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              <fo:table-row border="solid 0.5px black" font-weight="bold">
+                <fo:table-cell>
+                  <fo:block>
+                    $data.boxCount
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    $data.shipmentDimension.length
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    $data.shipmentDimension.height
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    $data.shipmentDimension.breadth
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    $data.shipmentDimension.weight KGS
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    #writeVolumetricWeight2($data.shipmentDimension) KGS
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+
+          </fo:table>
+
+          
+
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule"
+                                   rule-thickness="0px"/>
+                    </fo:block>
+                    <fo:table>
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block>I/We hereby certify that the information on this invoice is true and correct and the contents of this</fo:block>
+                                    <fo:block>shipments are as stated above. I/We do hereby authorize DHL Corporation to execute any additional</fo:block>
+                                    <fo:block>documents necessary for the export of merchandise described herein on my /our behalf.</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row font-weight="bold">
+                                <fo:table-cell>
+                                    <fo:block>Purpose of Shipment:Tech Media review</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row font-weight="bold">
+                                <fo:table-cell>
+                                    <fo:block>This invoice is for Customs Purpose Only</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table>
+                      <fo:table-body>
+                          <fo:table-row>
+                              <fo:table-cell text-align="right" padding-before="6pt" padding-after="3pt" display-align="after" margin-right="5mm">
+                                  #if($data.signatureUrl)
+                                  <fo:block>
+                                      <fo:external-graphic content-height="10mm"
+                                                           src="url('$data.signatureUrl')">
+                                      </fo:external-graphic>
+                                  </fo:block>
+                                  #end
+                              </fo:table-cell>
+                          </fo:table-row>
+                          <fo:table-row>
+                              <fo:table-cell text-align="right" padding-after="3pt" display-align="after">
+                                  <fo:block></fo:block>
+                              </fo:table-cell>
+                          </fo:table-row>
+                          <fo:table-row>
+                              <fo:table-cell text-align="right" padding-after="2pt" display-align="after">
+                                  <fo:block></fo:block>
+                              </fo:table-cell>
+                          </fo:table-row>
+                      </fo:table-body>
+                  </fo:table>
+                  
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
+
+#macro(writeImageUrl $invoiceCancelled)
+    #set($cancelledUrl='classpath:com/nextscm/commons/images/cancelled_image_1.jpg')
+    #set($nonCancelledUrl='classpath:com/nextscm/commons/images/cancelled_image_2.jpg')
+    #if($invoiceCancelled == true)
+        $cancelledUrl
+    #else
+        $nonCancelledUrl
+    #end
+#end
+
+
+#macro( writeFromAddressNvidia $data)
+  <fo:block>Trident Freight LLC</fo:block>
+  <fo:block>C/O NVIDIA</fo:block>
+  <fo:block>DHL EXPRESS LOGISTICS CENTRE</fo:block>
+  <fo:block>G 13 LIU WEST RING ROAD</fo:block>
+  <fo:block>DUBAI AIRPORT FREE ZONE</fo:block>
+  <fo:block>DUBAI, UNITED ARAB EMIRATES</fo:block>
+  <fo:block>CONTACT: SURESH KUMAR</fo:block>
+  <fo:block>TEL NO: +971 4 2924777</fo:block>
+  <fo:block>Importer Code: #writeString($data.invoiceMetaData.get("importerCode"))</fo:block>
+  <fo:block></fo:block>
+#end
+
+#macro( writeBillingAddressNvidia $data)
+  #set ($add = $data.billingAddress)
+  #if($add)
+  <fo:block>#writeString($add.name)</fo:block>
+  <fo:block>#writeString($add.line1)</fo:block>
+  <fo:block>#writeString($add.line2)</fo:block>
+  <fo:block>
+    #if($add.city)
+      #writeString($add.city),
+    #end
+    #writeString($add.state)
+    #if($add.stateCode)
+     -
+     #writeString($add.stateCode)
+    #end
+  </fo:block>
+
+  <fo:block>
+    #if($add.country)
+      #writeString($add.country),
+    #end
+    #writeString($add.zip)
+  </fo:block>
+  <fo:block>Tel: #writeString($add.phone)</fo:block> 
+  <fo:block></fo:block>
+  #end
+#end
+
+#macro( writeShippingAddressNvidia $data)
+  #set ($add = $data.shippingAddress)
+  #if($add)
+  <fo:block>#writeString($add.name)</fo:block>
+  <fo:block>#writeString($add.line1)</fo:block>
+  <fo:block>#writeString($add.line2)</fo:block>
+  <fo:block>
+    #if($add.city)
+      #writeString($add.city),
+    #end
+    #writeString($add.state)
+    #if($add.stateCode)
+     -
+     #writeString($add.stateCode)
+    #end
+  </fo:block>
+
+  <fo:block>
+    #if($add.country)
+      #writeString($add.country),
+    #end
+    #writeString($add.zip)
+  </fo:block>
+  <fo:block>Tel: #writeString($add.phone)</fo:block> 
+  <fo:block></fo:block>
+  #end
+#end
+
+
+#macro( writeEmail $add)
+  <fo:block>
+       #writeString($add.email)
+  </fo:block>
+#end
+
+#macro ( writeVolumetricWeight2 $shipmentDimension) 
+    #set($lengthWidth = $math.mul($shipmentDimension.length, $shipmentDimension.breadth))
+    #set($volume = $math.mul($lengthWidth, $shipmentDimension.height))
+    #set($volumetricWeight = $math.div($volume, 5000))
+    #set($roundedVolumetricWeight = $math.roundTo(2, $volumetricWeight))
+    #writeString($roundedVolumetricWeight)
+#end
+
+
+
+#macro( writeString $str)
+  #if($str)
+  <![CDATA[$str]]>
+  #end
+#end
+
+
+#macro( writeDateTime $dateTime)
+  #if($dateTime)
+    $date.format('dd MMM yyyy, hh:mm a', $dateTime)
+  #end
+#end

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml" standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root language="EN" font-size="8pt" font-family="arial">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master" page-height="101.6mm" page-width="152.4mm" margin-top="3mm" margin-bottom="0mm" margin-left="5mm" margin-right="5mm">
+          <fo:region-body region-name="body"/>
+          <fo:region-before region-name="header" extent="15mm" margin-bottom="5mm" margin-top="5mm"/>
+ display-align="before" precedence="true" />
+          <fo:region-after region-name="footer" extent="5mm" margin-bottom="0mm" margin-top="0mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+        <fo:static-content flow-name="header">
+          <fo:block border="1pt solid black" text-align="center">
+            Master Packslip
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="footer">
+          <fo:block border="1pt solid black" text-align="center">
+            Note- This is not a tax invoice
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="body" reference-orientation="0">
+          <fo:block margin-bottom="5mm"></fo:block>
+          <fo:table table-layout="fixed" width="100%" border="1pt solid black">
+            <fo:table-column column-width="proportional-column-width(70)"/>
+            <fo:table-column column-width="proportional-column-width(30)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>
+                    <fo:table>
+                      <fo:table-body>
+                        <fo:table-row>
+                          <fo:table-cell border="1pt solid black" margin-left="3pt">
+                            <fo:block>
+                              Order Number: #writeString($data.orderNo)
+                            </fo:block>
+                          </fo:table-cell>
+                          <fo:table-cell border="1pt solid black" margin-left="3pt">
+                            <fo:block>
+                              Order Date: #writeDate($data.orderDate)
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                        <fo:table-row>
+                          <fo:table-cell border="1pt solid black" margin-left="3pt">
+                            <fo:block>
+                              Customer Name: #writeString($data.customerName)
+                            </fo:block>
+                          </fo:table-cell>
+                          <fo:table-cell border="1pt solid black" margin-left="3pt">
+                            <fo:block>
+                              Customer Code: INCREFF
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                        <fo:table-row>
+                          <fo:table-cell border="1pt solid black" margin-left="3pt">
+                            <fo:block>
+                              Customer Address: #writeShippingAddress($data.toAddress)
+                            </fo:block>
+                          </fo:table-cell>
+                          <fo:table-cell border="1pt solid black" margin-left="3pt">
+                            <fo:block>
+                              Sender: Damensch Apparel
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-body>
+                    </fo:table>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>
+                    <fo:external-graphic content-height="10mm"
+                                          content-width="32mm"
+                                          scaling="uniform"
+                                          padding-left="2pt"
+                                          src="url('https://asset.brandfetch.io/id8OCaB0S_/idpC7rHSHe.png')">
+                    </fo:external-graphic>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block text-align="center" border="1pt solid black">
+            Order Packslip
+          </fo:block>
+
+          #set($stylewise_grouping = [])
+
+          #foreach($box in $data.boxDetailList)
+            #foreach($item in $box.boxItemList)
+              #set($isAddedToList = false)
+              #foreach($group in $stylewise_grouping)
+                #if($group.get(0).style.equals($item.style))
+                  $group.add($item)
+                  #set($isAddedToList = true)
+                #end
+              #end
+              #if( !$isAddedToList)
+                #set($new_style_group = [])
+                $new_style_group.add($item)
+                $stylewise_grouping.add($new_style_group)
+              #end
+            #end
+          #end
+
+          #set($total_quantity = 0)
+          #set($stylewise_size_grouping = [])
+
+          #foreach($group in $stylewise_grouping)
+            #set($total = 0)
+            #set($size_list = [0, 0, 0, 0, 0, 0])
+            #foreach($item in $group)
+              #if($item.size.equals("S"))
+                #set($total = $total + $item.quantity)
+                $size_list.set(0, $math.add($size_list.get(0), $item.quantity))
+              #end
+              #if($item.size.equals("M"))
+                #set($total = $total + $item.quantity)
+                $size_list.set(1, $math.add($size_list.get(1), $item.quantity))
+              #end
+              #if($item.size.equals("L"))
+                #set($total = $total + $item.quantity)
+                $size_list.set(2, $math.add($size_list.get(2), $item.quantity))
+              #end
+              #if($item.size.equals("XL"))
+                #set($total = $total + $item.quantity)
+                $size_list.set(3, $math.add($size_list.get(3), $item.quantity))
+              #end
+              #if($item.size.equals("XXL"))
+                #set($total = $total + $item.quantity)
+                $size_list.set(4, $math.add($size_list.get(4), $item.quantity))
+              #end
+            #end
+
+            $size_list.set(5, $total)
+            $stylewise_size_grouping.add($size_list)
+            #set($total_quantity = $math.add($total_quantity, $total))
+          #end
+
+          <fo:table table-layout="fixed" width="100%" border="1pt solid black">
+            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(20)"/>
+            <fo:table-column column-width="proportional-column-width(20)"/>
+            <fo:table-column column-width="proportional-column-width(20)"/>
+            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(10)"/>
+
+            <fo:table-header>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#F4B084"><fo:block>Size</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#F4B084"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#F4B084"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#F4B084"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#F4B084"><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block></fo:block></fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>S. no.</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>Box ID</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>Product</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>Style ID</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>S</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>M</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>L</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>XL</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>XXL</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black" background-color="#A9D08E"><fo:block>Total Qty</fo:block></fo:table-cell>
+              </fo:table-row>
+              #foreach($item in $stylewise_grouping)
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black"><fo:block>$foreach.count</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($data.shipmentCode)</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($item.get(0).description)</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($item.get(0).style)</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($stylewise_size_grouping.get($foreach.index).get(0))</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($stylewise_size_grouping.get($foreach.index).get(1))</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($stylewise_size_grouping.get($foreach.index).get(2))</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($stylewise_size_grouping.get($foreach.index).get(3))</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($stylewise_size_grouping.get($foreach.index).get(4))</fo:block></fo:table-cell>
+                <fo:table-cell border="1pt solid black"><fo:block>#writeString($stylewise_size_grouping.get($foreach.index).get(5))</fo:block></fo:table-cell>
+              </fo:table-row>
+              #end
+              <fo:table-row>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block></fo:block></fo:table-cell>
+                <fo:table-cell><fo:block>Total</fo:block></fo:table-cell>
+                <fo:table-cell><fo:block>#writeString($total_quantity)</fo:block></fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+
+          </fo:table>
+
+          
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
+
+  #macro( writeString $str)
+  #if($str)
+
+  <![CDATA[$str]]>
+  #end
+  #end
+
+#macro( writeStringWithSpaceAfterComma $str)
+<!--
+  Replacement of "," with ", " is done only when there is not already a space
+ after the ",".
+ Input     ->   Output
+ "abc,def, ghi" -> "abc, def, ghi"
+-->
+  #if($str)
+  <![CDATA[$str.replaceAll(",(?! )",", ")]]>
+  #end
+  #end
+
+  #macro( writeShippingAddress $add)
+  #if($add)
+
+  <fo:block font-size="8pt">#writeString($add.firstName) #writeString($add.middleName) #writeString($add.lastName)</fo:block>
+
+  <fo:block>
+  #if($add.street1)
+    <fo:inline font-size="8pt">#writeStringWithSpaceAfterComma($add.street1),</fo:inline>
+  #end
+  <!-- </fo:block>
+  <fo:block> -->
+  #if($add.street2)
+    <fo:inline font-size="8pt">#writeStringWithSpaceAfterComma($add.street2),</fo:inline>
+  #end
+  <!-- </fo:block>
+  <fo:block> -->
+  #if($add.street3)
+    <fo:inline font-size="8pt">#writeStringWithSpaceAfterComma($add.street3),</fo:inline>
+  #end
+  </fo:block>
+  <fo:block>
+  #if($add.city)
+    <fo:inline font-size="8pt">#writeString($add.city),</fo:inline>
+  #end
+
+  #if($add.state)
+    <fo:inline font-size="8pt">#writeString($add.state)-</fo:inline>
+  #end
+
+  #writeString($add.zip)
+  </fo:block>
+  #end
+  #end
+
+  #macro( writeBarcodeWithoutText $str)
+  #if($str.toString().contains("&"))
+  #set( $str = $str.replace("&", "&amp;") )
+  #end
+  #if($str.toString().contains("<"))
+  #set( $str = $str.replace("<", "&lt;") )
+  #end
+  #if($str.toString().contains(">"))
+  #set( $str = $str.replace(">", "&gt;") )
+  #end
+  #if($str.toString().contains("'"))
+  #set( $str = $str.replace("'", "&apos;") )
+  #end
+  #if($str.toString().contains('"'))
+  #set( $str = $str.replace('"', "&quot;") )
+  #end
+  #if($str)
+<fo:instream-foreign-object>
+<bc:barcode xmlns:bc="http://barcode4j.krysalis.org/ns" message="$str">
+<bc:code128>
+  <bc:height>10mm</bc:height>
+  <human-readable>
+    <placement>none</placement>
+  </human-readable>
+</bc:code128>
+</bc:barcode>
+</fo:instream-foreign-object>
+  #end
+  #end
+
+  #macro(writeDimension $str)
+  #if($str)
+  #writeString($str)
+  #else
+  1.0
+  #end
+  #end
+
+  #macro( writeDate $dateTime)
+    #if($dateTime)
+    $date.format('d-M-yyyy', $dateTime)
+    #end
+  #end

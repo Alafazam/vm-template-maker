@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0"
+                xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml"
+              standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root language="EN" font-size="8pt" font-family="arial">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master"
+                               page-height="297mm" page-width="210mm" margin-top="5mm"
+                               margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
+
+          <fo:region-body region-name="body" background-image="url(#writeImageUrl($data.invoiceCancelled))"
+                          background-color="transparent" fox:background-image-width="200mm"
+                          fox:background-image-height="296mm" margin-bottom="15mm"/>
+          <fo:region-before region-name="header" extent="5mm"
+                            margin-bottom="5mm" margin-top="5mm"/>
+          display-align="before" precedence="true" />
+          <fo:region-after region-name="footer" extent="15mm"
+                           margin-bottom="5mm" margin-top="15mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+
+        <fo:static-content flow-name="header">
+          <fo:block>
+          </fo:block>
+        </fo:static-content>
+
+        <fo:static-content flow-name="footer">
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule"
+                       rule-thickness="0.5px"/>
+          </fo:block>
+          <fo:table table-layout="fixed" width="100%">
+              <fo:table-body>
+                  <fo:table-row>
+                      <fo:table-cell padding-after="0pt">
+                          <fo:block>
+                            Page
+                            <fo:page-number/>
+                            (This is a system generated document and doesn't need signature)
+                          </fo:block>
+                       </fo:table-cell>
+                       <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt">
+                          <fo:block>
+                            Registered Office Address - 80 Feet Road, 4th Block Koramangala, 
+                            Bengaluru Urban, Bangalore, Karnataka, India, 560034   
+                            No.612/1, PID No.68-299-612/1,Attic Space- Lotus, 3rd Floor
+                          </fo:block>
+                       </fo:table-cell>
+                       <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt"
+                                                                      display-align="after">
+                           <fo:block>Original for Recipient</fo:block>
+                       </fo:table-cell>
+                   </fo:table-row>
+               </fo:table-body>
+           </fo:table>
+        </fo:static-content>
+
+                <fo:flow flow-name="body" border-collapse="collapse"
+                         reference-orientation="0">
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block>
+                                        <fo:external-graphic content-height="10mm"
+                                                             content-width="32mm"
+                                                             scaling="uniform"
+                                                             padding-left="2pt"
+                                                             src="url('$data.logoUrl')">
+                                        </fo:external-graphic>
+                                    </fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="center">
+                                    <fo:block font-size="12pt">GST TAX INVOICE</fo:block>
+                                    <fo:block font-size="10pt">#writeString($data.fromPartyName)</fo:block>
+                                    <fo:block margin-top="7mm">
+                                      #writeString($data.fromAddress.line1),
+                                    #writeString($data.fromAddress.line2), #writeString($data.fromAddress.line3),
+                                    </fo:block>
+                                    <fo:block margin-top="2mm">
+                                    #if($data.fromAddress.city)
+                                      #writeString($data.fromAddress.city),
+                                    #end
+                                    #writeString($data.fromAddress.state),
+                                    #if($data.fromAddress.country)
+                                      #writeString($data.fromAddress.country),
+                                    #end
+                                    #writeString($data.fromAddress.zip)</fo:block>
+                                  <fo:block margin-top="1mm">Phone: 9538432080</fo:block>
+                                  <fo:block margin-top="1mm">Email: Ganesh.h@damensch.com</fo:block>
+                                  <fo:block margin-top="1mm">GSTIN: #writeString($data.fromTaxId)</fo:block>
+                                  <fo:block margin-top="1mm">PAN: #writeString($data.panNo)</fo:block>
+                                  <fo:block margin-top="1mm">IRN: #writeString($data.irn)</fo:block>
+                                  <fo:block margin-top="1mm">CIN: U74995KA2018PTC150647</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="right">
+                                    <fo:block>
+                                      <fo:external-graphic content-height="55mm"
+                                                             content-width="55mm"
+                                                             scaling="uniform"
+                                                             display-align="after"
+                                                             src="url('$data.qrCodeUrl')">
+                                        </fo:external-graphic>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule"
+                                   rule-thickness="0.5px"/>
+                    </fo:block>
+                    <!-- INVOICE INFORMATION -->
+                    <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(21)"/>
+                        <fo:table-column column-width="proportional-column-width(28)"/>
+                        <fo:table-column column-width="proportional-column-width(22)"/>
+                        <fo:table-column column-width="proportional-column-width(26)"/>
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block>Invoice #: #writeString($data.invoiceOrStockTransferNo)</fo:block>
+                                    <fo:block>Time: #writeDateTime($data.invoiceOrStockTransferTime)</fo:block>
+                                    <fo:block>Currency: #writeString($data.currency)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block>
+                                        #writeBarcodeWithoutText($data.invoiceOrStockTransferNo)
+                                    </fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block>Order #: #writeString($data.orderNo)</fo:block>
+                                    <fo:block>Time: #writeDateTime($data.orderTime)</fo:block>
+                                    <fo:block>Channel Order #: #writeString($data.channelOrderNo)</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block>
+                                        #writeBarcodeWithoutText($data.orderNo)
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule"
+                                   rule-thickness="0px"/>
+                    </fo:block>
+
+          <!-- ADDRESS & TAX -->
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(20)" border="solid 0.5px black"/>
+            <fo:table-column column-width="proportional-column-width(40)" border="solid 0.5px black"/>
+            <fo:table-column column-width="proportional-column-width(40)" border="solid 0.5px black"/>
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block padding-before="2px">  BILL TO  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>  SHIP TO  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>Party Name : </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeString($data.toPartyName)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeString($data.toPartyName)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>GSTIN : </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeString($data.toTaxId)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeString($data.toTaxId)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>Address : </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeAddress($data.billingAddress)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>#writeAddress($data.shippingAddress)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+
+              <fo:table-row border="solid 0.5px black">
+                    <fo:table-cell>
+                        <fo:block>Email : </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                        <fo:block>#writeEmail($data.billingAddress)</fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                        <fo:block>#writeEmail($data.shippingAddress)</fo:block>
+                    </fo:table-cell>
+              </fo:table-row>
+
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block></fo:block>
+          <fo:block></fo:block>
+
+          <!-- LINE ITEMS -->
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule"
+                       rule-thickness="0px"/>
+            Invoice Items
+          </fo:block>
+
+          <fo:table width="100%" table-layout="fixed">
+            <fo:table-column column-number="1" column-width="2%" border="solid 0.5px black"/> <!--# -->
+            <fo:table-column column-number="2" column-width="12%" border="solid 0.5px black"/><!--SKU -->
+            <fo:table-column column-number="3" column-width="12%" border="solid 0.5px black"/><!--Style Id -->
+            <fo:table-column column-number="4" column-width="9%" border="solid 0.5px black"/><!--Description -->
+            <fo:table-column column-number="5" column-width="7%" border="solid 0.5px black"/><!--Hsn Code -->
+            <fo:table-column column-number="6" column-width="3%" border="solid 0.5px black"/><!--Qty
+              up to 100,000 -->
+            <fo:table-column column-number="7" column-width="7%" border="solid 0.5px black"/><!--MRP
+              up to 100,000 -->
+            <fo:table-column column-number="8" column-width="7%" border="solid 0.5px black"/><!--Base Amt
+              up to 100,000 -->
+            <fo:table-column column-number="9" column-width="5%" border="solid 0.5px black"/><!--SGST Rate-->
+            <fo:table-column column-number="10" column-width="6%" border="solid 0.5px black"/><!--SGST Value
+              % -->
+            <fo:table-column column-number="11" column-width="5%" border="solid 0.5px black"/><!--CGST Rate -->
+            <fo:table-column column-number="12" column-width="6%" border="solid 0.5px black"/><!--CGST Value -->
+            <fo:table-column column-number="13" column-width="5%" border="solid 0.5px black"/><!--IGST rate -->
+            <fo:table-column column-number="14" column-width="7%" border="solid 0.5px black"/><!--IGST value -->
+            <fo:table-column column-number="15" column-width="7%" border="solid 0.5px black"/><!--Total Amt -->
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>#</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>SKU</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>EAN</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Desc</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>HSN Code</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Qty</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>MRP</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Base Value</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>SGST Rate</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>SGST Value</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>CGST Rate</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>CGST Value</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>IGST Rate</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>IGST Value</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Total Amt</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              #foreach($item in $data.itemLines)
+                <fo:table-row border="solid 0.5px black">
+                  <fo:table-cell text-align="center">
+                    <fo:block>$foreach.count</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>#writeString($item.vendorSku)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>#writeString($item.channelSerialNo)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>#writeString($item.itemName)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>#writeString($item.hsnId)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$item.quantity</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.mrp)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.baseSellingPriceTotal)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.sgstRate)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.sgstAmount)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.cgstRate)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.cgstAmount)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.igstRate)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.igstAmount)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.actualSellingPriceTotal)</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              #end
+
+              <!-- SubTotals -->
+              <fo:table-row border="solid 0.5px black" font-weight="bold">
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Subtotal</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$data.quantity</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.subBaseAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalSgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalCgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalIgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.subTotalAmount)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+
+              <!-- Final Totals -->
+              <fo:table-row border="solid 0.5px black" font-weight="bold">
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Total</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$data.quantity</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.finalBaseAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalSgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalCgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalIgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.finalTotalAmount)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+              <!-- Final Total in words -->
+                <fo:table-row border="solid 0.5px black" font-weight="bold">
+                  <fo:table-cell>
+                    <fo:block></fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block></fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                  <fo:table-cell number-columns-spanned="2">
+                    <fo:block>Total (in words)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-columns-spanned="6">
+                    <fo:block>$data.totalAmountInWords $data.primaryCurrencyUnit and $data.totalAmountCents $data.secondaryCurrencyUnit</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+
+
+            </fo:table-body>
+          </fo:table>
+          <!-- TAX ITEMS -->
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule"
+                       rule-thickness="0px"/>
+            Tax Details
+          </fo:block>
+
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-number="1" column-width="2%" border="solid 0.5px black"/> <!--# -->
+            <fo:table-column column-number="2" column-width="8%" border="solid 0.5px black"/><!--HSN -->
+            <fo:table-column column-number="3" column-width="9%" border="solid 0.5px black"/><!--Taxable Amount -->
+            <fo:table-column column-number="4" column-width="5%" border="solid 0.5px black"/><!--Quantity -->
+            <fo:table-column column-number="5" column-width="9%" border="solid 0.5px black"/><!--SGST Tax Rate -->
+            <fo:table-column column-number="6" column-width="9%" border="solid 0.5px black"/><!--SGST Total -->
+            <fo:table-column column-number="7" column-width="9%" border="solid 0.5px black"/><!--CGST Tax Rate -->
+            <fo:table-column column-number="8" column-width="9%" border="solid 0.5px black"/><!--CGST Total -->
+            <fo:table-column column-number="9" column-width="9%" border="solid 0.5px black"/><!--IGST Tax Rate -->
+            <fo:table-column column-number="10" column-width="9%" border="solid 0.5px black"/><!--IGST Total -->
+            <fo:table-column column-number="11" column-width="11%" border="solid 0.5px black"/><!--Total Tax Amount -->
+            <fo:table-column column-number="12" column-width="11%" border="solid 0.5px black"/><!--Total Amount -->
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>#</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>HSN Code</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Taxable Amount</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Qty</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>SGST Tax Rate</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>SGST Total</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>CGST Tax Rate</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>CGST Total</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>IGST Tax Rate</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>IGST Total</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Total Tax Amount</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>Total Amount</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              #foreach($item in $data.hsnBasedLineItems)
+                <fo:table-row border="solid 0.5px black">
+                  <fo:table-cell>
+                    <fo:block>$foreach.count</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>#writeString($item.hsnId)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.baseAmount)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$item.quantity</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.sgstTaxRate)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.sgstTaxTotal)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.cgstTaxRate)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.cgstTaxTotal)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.igstTaxRate)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.igstTaxTotal)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.taxAmountTotal)</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell text-align="center">
+                    <fo:block>$math.roundTo(2, $item.totalAmount)</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              #end
+
+              <fo:table-row border="solid 0.5px black" font-weight="bold">
+                <fo:table-cell>
+                  <fo:block>Total</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.finalBaseAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$data.quantity</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalSgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalCgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block></fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.totalIgstAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.finalTaxAmount)</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center">
+                  <fo:block>$math.roundTo(2, $data.finalTotalAmount)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+
+            </fo:table-body>
+          </fo:table>
+
+                    <fo:block>
+                        <fo:leader leader-length="100%" leader-pattern="rule"
+                                   rule-thickness="0px"/>
+                        Remarks
+                    </fo:block>
+                    <fo:table>
+                        <fo:table-body>
+                            <fo:table-row border="solid 0.5px black">
+                                <fo:table-cell height="1in">
+                                    <fo:block>#writeString($data.remarks)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    #if($data.signatureUrl)
+                    <fo:table>
+                        <fo:table-body>
+
+                            <fo:table-row>
+
+                                <fo:table-cell text-align="right"  padding-before="6pt"  padding-after="3pt" display-align="after" margin-right="5mm">
+                                    <fo:block>
+                                        <fo:external-graphic content-height="10mm"
+                                                             src="url('$data.signatureUrl')">
+                                        </fo:external-graphic>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row>
+                                <fo:table-cell text-align="right"   padding-after="3pt" display-align="after">
+                                    <fo:block>Authorized Sign   </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row>
+                                <fo:table-cell text-align="right"   padding-after="2pt" display-align="after">
+                                    <fo:block>For #writeString($data.vendorName) </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    #end
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
+
+#macro(writeImageUrl $invoiceCancelled)
+    #set($cancelledUrl='classpath:com/nextscm/commons/images/cancelled_image_1.jpg')
+    #set($nonCancelledUrl='classpath:com/nextscm/commons/images/cancelled_image_2.jpg')
+    #if($invoiceCancelled == true)
+        $cancelledUrl
+    #else
+        $nonCancelledUrl
+    #end
+#end
+
+
+#macro( writeAddress $add)
+  #if($add)
+  <fo:block>#writeString($add.name)</fo:block>
+  <fo:block>#writeString($add.line1)</fo:block>
+  <fo:block>#writeString($add.line2)</fo:block>
+  <fo:block>
+    #if($add.city)
+      #writeString($add.city),
+    #end
+    #writeString($add.state)
+    #if($add.stateCode)
+     -
+     #writeString($add.stateCode)
+    #end
+  </fo:block>
+
+  <fo:block>
+    #if($add.country)
+      #writeString($add.country),
+    #end
+    #writeString($add.zip)
+  </fo:block>
+  <fo:block>#writeString($add.phone)</fo:block>
+  <fo:block></fo:block>
+  #end
+#end
+
+#macro( writeEmail $add)
+  <fo:block>
+       #writeString($add.email)
+  </fo:block>
+#end
+
+#macro( writeTaxItems $subTaxItemData)
+  #if($subTaxItemData)
+    #foreach($taxItem in $subTaxItemData)
+    |#writeString($taxItem.type): $math.roundTo(2, $taxItem.rate)
+    #end
+  |
+  #end
+#end
+
+#macro( writeTaxItemsData $subTaxItemData)
+  #if($subTaxItemData)
+    #foreach($taxItem in $subTaxItemData)
+    |#writeString($taxItem.type): $math.roundTo(2, $taxItem.subTaxTotal)
+    #end
+   |
+  #end
+#end
+
+
+#macro( writeString $str)
+  #if($str)
+  <![CDATA[$str]]>
+  #end
+#end
+
+#macro( writeBarcodeWithoutText $str)
+  #if($str.toString().contains("&"))
+    #set( $str = $str.replace("&", "&amp;") )
+  #end
+  #if($str.toString().contains("<"))
+    #set( $str = $str.replace("<", "&lt;") )
+  #end
+  #if($str.toString().contains(">"))
+    #set( $str = $str.replace(">", "&gt;") )
+  #end
+  #if($str.toString().contains("'"))
+    #set( $str = $str.replace("'", "&apos;") )
+  #end
+  #if($str.toString().contains('"'))
+    #set( $str = $str.replace('"', "&quot;") )
+  #end
+  #if($str)
+  <fo:instream-foreign-object>
+    <bc:barcode xmlns:bc="http://barcode4j.krysalis.org/ns"
+                message="$str">
+      <bc:code128>
+        <bc:height>10mm</bc:height>
+        <human-readable>
+          <placement>none</placement>
+        </human-readable>
+      </bc:code128>
+    </bc:barcode>
+  </fo:instream-foreign-object>
+  #end
+#end
+
+#macro( writeDateTime $dateTime)
+  #if($dateTime)
+    $date.format('dd MMM yyyy, hh:mm a', $dateTime)
+  #end
+#end

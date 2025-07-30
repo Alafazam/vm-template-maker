@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml" standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root language="EN" font-size="8pt" font-family="arial">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master" page-height="101.6mm" page-width="152.4mm" margin-top="3mm" margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
+          <fo:region-body region-name="body"/>
+          <fo:region-before region-name="header" extent="5mm" margin-bottom="0mm" margin-top="0mm"/>
+ display-align="before" precedence="true" />
+          <fo:region-after region-name="footer" extent="5mm" margin-bottom="0mm" margin-top="0mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+        <fo:static-content flow-name="header">
+          <fo:block></fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="footer">
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0.5px"/>
+          </fo:block>
+          <!-- https://stackoverflow.com/questions/391759/xsl-fo-inline-alignment -->
+          <fo:block text-align-last="justify">
+            Powered by Increff®
+            <fo:leader leader-pattern="space" />
+            #set( $timestamp = $data.templateAttributesData.box_timestamp)
+            #if($timestamp)
+            $date.format('yyyy-M-d HH:mm',$timestamp)
+            <fo:leader leader-pattern="space" />
+            #end
+            Box $data.boxSerialNo of $data.totalBoxCount
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="body" reference-orientation="0">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell padding-after="0pt">
+                  <fo:block>
+                    <fo:block>Box #:#writeBarcodeWithoutText($data.boxId)</fo:block>
+
+                    <fo:block>
+                      <fo:inline font-size="12pt" font-weight="bold">#writeString($data.boxId)
+                      </fo:inline>
+
+                    </fo:block>
+                    <fo:block>#writeString($data.clientName)</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt" display-align="before">
+                  <fo:block>BOX LABEL</fo:block>
+                </fo:table-cell>
+                <fo:table-cell text-align="center" padding-before="2pt" padding-after="2pt" display-align="before" font-size="10pt">
+                  <fo:block>#writeString($data.vendorName)</fo:block>
+                  <fo:block text-align="right" font-size="10pt" font-weight="bold">Dimensions: #writeDimension($data.boxDetails.length) *
+                                                              #writeDimension($data.boxDetails.breadth) *
+                                                              #writeDimension($data.boxDetails.height)
+                  </fo:block>
+
+                  <fo:block text-align="right"  font-weight="bold">
+                                                              Weight: #writeDimension($data.boxDetails.weight)
+                  </fo:block>
+                  <fo:block text-align="right">
+                                                              Packed Qty: #writeDimension($data.boxDetails.packedQuantity)
+                  </fo:block>
+
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block text-align="left">
+          #set($complete_category_string = "")
+
+              #set($uniqueItemCategories = [])
+              #set($is_first_category = true)
+
+              #foreach($item in $data.orderLineItemList)
+              #if( ! $uniqueItemCategories.contains( $item.category )  )
+                      #if( $uniqueItemCategories.add($item.category) ) #end
+                      ##note the if above is to trap a "true" return - may not be required
+                      #if($is_first_category)
+                      #set($complete_category_string = "$item.category")
+                      #else
+                      #set($complete_category_string = "$complete_category_string, $item.category")
+                      #end
+
+                      #set($is_first_category = false)
+                  #end
+              #end
+              #set($trim_length = $math.min($complete_category_string.length(),100))
+              Categories: [#writeString($complete_category_string.substring(0,$trim_length))]
+              </fo:block>
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0.5px"/>
+          </fo:block>
+
+          <!-- INVOICE INFORMATION -->
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(50)"/>
+            <fo:table-column column-width="proportional-column-width(50)"/>
+            <fo:table-body >
+
+
+
+              <fo:table-row font-size="8pt">
+                <fo:table-cell font-size="10pt">
+                <fo:block>
+
+<fo:block>Order #:<fo:inline text-align="left">#writeBarcodeWithoutText($data.orderNo)</fo:inline></fo:block>
+                  <fo:block>
+                    <fo:inline font-size="8pt" font-weight="bold">
+                      #writeString($data.orderNo)
+                    </fo:inline>
+                  </fo:block>
+
+
+                  <fo:block margin-top="2mm">Shipment #:</fo:block>
+                                    <fo:block>
+                                      <fo:inline font-size="8pt" font-weight="bold">
+                                                        #writeString($data.shipmentCode)
+                                      </fo:inline>
+                                    </fo:block>
+
+
+
+                         <fo:block margin-top="2mm">
+                                                        #if($data.invoiceNo)
+                                                          Invoice #: #writeBarcodeWithoutText($data.invoiceNo)
+                                                        #end
+                                          </fo:block>
+
+
+
+                                          <fo:block>
+
+                                            <fo:inline font-size="8pt" font-weight="bold">
+                                                              #writeString($data.invoiceNo)
+                                            </fo:inline>
+
+                                          </fo:block>
+
+                                        #if($data.transporterName)
+
+                                       <fo:block>
+                                         <fo:inline font-size="10pt" font-weight="bold">
+                                                           #writeString($data.transporterName)
+                                         </fo:inline>
+                                       </fo:block>
+                                      #end
+
+                </fo:block>
+                </fo:table-cell>
+                <fo:table-cell font-size="10pt">
+                <fo:block color="#797979" font-size="10pt">SHIP TO:</fo:block>
+                <fo:block font-weight="bold" >
+                                  #if($data.customerName)
+                                    #writeString($data.customerName)
+                                  #end
+                                  </fo:block>
+                  <fo:block font-weight="bold">#writeAddressShipping($data.toAddress)</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0.5px"/>
+          </fo:block>
+          <fo:block font-weight="bold">
+            <fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0px"/>
+          </fo:block>
+          <fo:table>
+            <fo:table-body>
+              <fo:table-row>
+              <fo:table-cell>
+              <fo:block>
+              #if($data.templateAttributesData.increff_order_id)
+                  <fo:block>Increff Order #:#writeBarcodeWithoutText($data.templateAttributesData.increff_order_id)</fo:block>
+                  <fo:block>
+                    <fo:inline font-size="11pt" font-weight="bold">#writeString($data.templateAttributesData.increff_order_id)</fo:inline>
+                  </fo:block>
+              #end
+              </fo:block>
+              </fo:table-cell>
+                <fo:table-cell >
+                  <fo:block font-size="10pt" font-weight="bold">
+                    #if($data.remarks)
+                      #set($trim_length = $math.min($data.remarks.length(),80))
+                      #writeString($data.remarks.substring(0,$trim_length))
+                    #end
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="page-master">
+        <fo:static-content flow-name="header">
+          <fo:block></fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="footer">
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule" rule-thickness="0.5px"/>
+          </fo:block>
+          <!-- https://stackoverflow.com/questions/391759/xsl-fo-inline-alignment -->
+          <fo:block text-align-last="justify">
+            Powered by Increff®
+            <fo:leader leader-pattern="space" />
+            #set( $timestamp = $data.templateAttributesData.box_timestamp)
+            #if($timestamp)
+            $date.format('yyyy-M-d HH:mm',$timestamp)
+            <fo:leader leader-pattern="space" />
+            #end
+            Box $data.boxSerialNo of $data.totalBoxCount
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="body" reference-orientation="0">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-header font-weight="bold">
+              <fo:table-row border="solid 0.5px black">
+                <fo:table-cell>
+                  <fo:block>#</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Item/SKU/EAN</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Quantity</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-body>
+              #foreach($item in $data.orderLineItemList)
+                <fo:table-row border="solid 0.5px black">
+                  <fo:table-cell>
+                    <fo:block>$foreach.count</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>$item.clientSku</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>$item.quantity</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              #end
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
+
+  #macro( writeString $str)
+  #if($str)
+
+  <![CDATA[$str]]>
+  #end
+  #end
+
+#macro( writeStringWithSpaceAfterComma $str)
+<!--
+  Replacement of "," with ", " is done only when there is not already a space
+ after the ",".
+ Input     ->   Output
+ "abc,def, ghi" -> "abc, def, ghi"
+-->
+  #if($str)
+  <![CDATA[$str.replaceAll(",(?! )",", ")]]>
+  #end
+  #end
+
+  #macro( writeAddressShipping $add)
+  #if($add)
+
+  <fo:block font-size="8pt">#writeString($add.firstName) #writeString($add.middleName) #writeString($add.lastName)</fo:block>
+
+<fo:block>
+#if($add.street1)
+  <fo:inline font-size="8pt" font-weight="bold">#writeStringWithSpaceAfterComma($add.street1),</fo:inline>
+#end
+</fo:block>
+<fo:block>
+#if($add.street2)
+  <fo:inline font-size="8pt" font-weight="bold">#writeStringWithSpaceAfterComma($add.street2),</fo:inline>
+#end
+</fo:block>
+<fo:block>
+#if($add.street3)
+  <fo:inline font-size="8pt" font-weight="bold">#writeStringWithSpaceAfterComma($add.street3),</fo:inline>
+#end
+</fo:block>
+<fo:block>
+#if($add.city)
+  <fo:inline font-size="10pt" font-weight="bold">#writeString($add.city),</fo:inline>
+#end
+
+#if($add.district)
+  <fo:inline font-size="10pt" font-weight="bold">#writeString($add.district),</fo:inline>
+#end
+
+</fo:block>
+
+<fo:block>
+  <fo:inline font-size="10pt" font-weight="bold">#writeString($add.state)</fo:inline>
+</fo:block>
+
+<fo:block font-size="10pt" font-weight="bold">
+#if($add.country)
+#writeString($add.country),
+#end
+#writeString($add.zip)
+</fo:block>
+<fo:block font-size="10pt"></fo:block>
+  #end
+  #end
+
+  #macro( writeBarcodeWithoutText $str)
+  #if($str.toString().contains("&"))
+  #set( $str = $str.replace("&", "&amp;") )
+  #end
+  #if($str.toString().contains("<"))
+  #set( $str = $str.replace("<", "&lt;") )
+  #end
+  #if($str.toString().contains(">"))
+  #set( $str = $str.replace(">", "&gt;") )
+  #end
+  #if($str.toString().contains("'"))
+  #set( $str = $str.replace("'", "&apos;") )
+  #end
+  #if($str.toString().contains('"'))
+  #set( $str = $str.replace('"', "&quot;") )
+  #end
+  #if($str)
+<fo:instream-foreign-object>
+<bc:barcode xmlns:bc="http://barcode4j.krysalis.org/ns" message="$str">
+<bc:code128>
+  <bc:height>10mm</bc:height>
+  <human-readable>
+    <placement>none</placement>
+  </human-readable>
+</bc:code128>
+</bc:barcode>
+</fo:instream-foreign-object>
+  #end
+  #end
+
+  #macro(writeDimension $str)
+  #if($str)
+  #writeString($str)
+  #else
+  1.0
+  #end
+  #end
+
+  #macro( writeDateTime $dateTime $format)
+  #if($dateTime)
+  $date.format('dd MMM yyyy, hh:mm a', $dateTime)
+  #end
+  #end

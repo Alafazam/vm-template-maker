@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0"
+                xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml"
+              standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root language="EN" font-size="8pt" font-family="arial">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master"
+                               page-height="297mm" page-width="210mm" margin-top="5mm"
+                               margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
+
+          <fo:region-body region-name="body" background-image="url(#writeImageUrl($data.invoiceCancelled))"
+                          background-color="transparent" fox:background-image-width="200mm"
+                          fox:background-image-height="296mm"/>
+          <fo:region-before region-name="header" extent="5mm"
+                            margin-bottom="5mm" margin-top="5mm"/>
+          display-align="before" precedence="true" />
+          <fo:region-after region-name="footer" extent="15mm"
+                           margin-bottom="5mm" margin-top="5mm"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+
+        <fo:static-content flow-name="header">
+          <fo:block>
+          </fo:block>
+        </fo:static-content>
+
+        <fo:static-content flow-name="footer">
+          <fo:block>
+            <fo:leader leader-length="100%" leader-pattern="rule"
+                       rule-thickness="0.5px"/>
+          </fo:block>
+          <fo:table table-layout="fixed" width="100%">
+              <fo:table-body>
+                  <fo:table-row>
+                      <fo:table-cell padding-after="0pt">
+                          <fo:block padding-top="4pt">
+                            Bill By:
+                          </fo:block>
+                       </fo:table-cell>
+                       <fo:table-cell padding-before="2pt" padding-after="2pt"
+                                      display-align="after">
+                           <fo:block>Regd. Address: TOWER 9, 921, Embassy </fo:block>
+                           <fo:block>Pristine Apartments, Iblur Village, Bellandur, </fo:block>
+                           <fo:block>Bengaluru (Bangalore) Urban,</fo:block>
+                           <fo:block>Karnataka - 560103</fo:block>
+                       </fo:table-cell>
+                       <fo:table-cell padding-after="0pt">
+                          <fo:block>
+                            It you have any queries, feel free to call customer care at 9986143500 or use contact us section on www.aramya.in
+                          </fo:block>
+                       </fo:table-cell>
+                   </fo:table-row>
+               </fo:table-body>
+           </fo:table>
+        </fo:static-content>
+
+                <fo:flow flow-name="body" border-collapse="collapse"
+                         reference-orientation="0" border="solid 0.5px black">
+                    <fo:table table-layout="fixed" width="100%" border="solid 0.5px black">
+                        <fo:table-column column-width="proportional-column-width(33)" border="solid 0.5px black"/>
+                        <fo:table-column column-width="proportional-column-width(33)" border="solid 0.5px black"/>
+                        <fo:table-column column-width="proportional-column-width(33)" border="solid 0.5px black"/>
+                        <fo:table-body>
+                            <fo:table-row border="solid 0.5px black">
+                                <!-- Billed By -->
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>
+                                      Billed By:
+                                    </fo:block>
+                                    <fo:block font-weight="bold">
+                                      #writeString($data.fromPartyName)
+                                    </fo:block>
+                                    <fo:block>
+                                      #writeAddress($data.fromAddress)
+                                    </fo:block>
+                                    <fo:block>
+                                      GSTIN: #writeString($data.fromTaxId)
+                                    </fo:block>
+                                </fo:table-cell>
+
+                                <!-- Bill To -->
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>
+                                      Bill To:
+                                    </fo:block>
+                                    <fo:block font-weight="bold">
+                                      #writeString($data.toPartyName)
+                                    </fo:block>
+                                    <fo:block>
+                                      #writeAddress($data.billingAddress)
+                                    </fo:block>
+                                </fo:table-cell>
+
+                                <!-- Ship To -->
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>
+                                      Ship To:
+                                    </fo:block>
+                                    <fo:block font-weight="bold">
+                                      #writeString($data.toPartyName)
+                                    </fo:block>
+                                    <fo:block>
+                                      #writeAddress($data.shippingAddress)
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row padding-before="2pt" border="solid 0.5px black">
+                                <!-- Invoice Details -->
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>
+                                        Invoice Details:
+                                    </fo:block>
+                                    <fo:block>
+                                        Invoice Date: <fo:inline font-weight="bold">#writeCustomDateTime($data.invoiceOrStockTransferTime)</fo:inline>
+                                    </fo:block>
+                                    <fo:block>
+                                        Invoice Number: <fo:inline font-weight="bold">#writeString($data.invoiceOrStockTransferNo)</fo:inline>
+                                    </fo:block>
+                                    <fo:block display-align="center" justify-content="center" text-align="center"
+                                              padding-top="3pt" padding-bottom="4pt">
+                                        #writeBarcodeWithoutText($data.invoiceOrStockTransferNo)
+                                    </fo:block>
+                                </fo:table-cell>
+
+                                <!-- Order Details -->
+                                <fo:table-cell padding="2pt">
+                                    <fo:block font-weight="bold">
+                                        #writeString($data.orderNo)
+                                    </fo:block>
+                                    <fo:block>
+                                        Order Date: <fo:inline font-weight="bold">#writeCustomDateTime($data.orderTime)</fo:inline>
+                                    </fo:block>
+                                    <fo:block display-align="center" justify-content="center" text-align="center"
+                                              padding-top="3pt" padding-bottom="4pt">
+                                        #writeBarcodeWithoutText($data.orderNo)
+                                    </fo:block>
+                                </fo:table-cell>
+
+                                <!-- Payment Details -->
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>
+                                        Payment Mode: <fo:inline font-weight="bold">#writeString($data.paymentInfo.mode)</fo:inline>
+                                    </fo:block>
+                                    <fo:block>
+                                        Transaction Date: <fo:inline font-weight="bold">#writeDateTime($data.paymentInfo.paymentDate)</fo:inline>
+                                    </fo:block>
+                                    <fo:block padding-top="3pt">
+                                        Dispatch through: 
+                                    </fo:block>
+                                    <fo:block>
+                                        AWB No: <fo:inline font-weight="bold">#writeString($data.awb)</fo:inline>
+                                    </fo:block>
+                                    <fo:block display-align="center" justify-content="center" text-align="center" padding-top="2pt">
+                                        #writeBarcodeWithoutText($data.awb)
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+
+                            <fo:table-row>
+                                <fo:table-cell number-columns-spanned="3">
+                                    <fo:table table-layout="fixed" width="100%">
+                                        <!-- Sl No -->
+                                        <fo:table-column column-width="5%" border="solid 0.5px black"/>
+                                        <!-- Description -->
+                                        <fo:table-column column-width="20%" border="solid 0.5px black"/>
+                                        <!-- Sku Code -->
+                                        <fo:table-column column-width="15%" border="solid 0.5px black"/>
+                                        <!-- Qty -->
+                                        <fo:table-column column-width="8%" border="solid 0.5px black"/>
+                                        <!-- Base Price -->
+                                        <fo:table-column column-width="10%" border="solid 0.5px black"/>
+                                        <!-- Discount -->
+                                        <fo:table-column column-width="10%" border="solid 0.5px black"/>
+                                        <!-- Taxable amount -->
+                                        <fo:table-column column-width="10%" border="solid 0.5px black"/>
+                                        <!-- GST -->
+                                        <fo:table-column column-width="10%" border="solid 0.5px black"/>
+                                        <!-- Total Amount -->
+                                        <fo:table-column column-width="12%" border="solid 0.5px black"/>
+                                        <fo:table-header>
+                                            <fo:table-row border="solid 0.5px black">
+                                                <fo:table-cell>
+                                                    <fo:block>Sl. No.</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>Description of Goods</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>SKU Code</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>Qty</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>Selling Price (after discount before tax) (INR)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>Discount (INR)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>Taxable Amount (INR)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                  #if($data.totalIgstAmount == 0)
+                                                    <fo:block>CGST/SGST (INR)</fo:block>
+                                                  #else
+                                                    <fo:block>IGST (INR)</fo:block>
+                                                  #end
+                                                </fo:table-cell>
+                                                <fo:table-cell>
+                                                    <fo:block>Total Amount (INR)</fo:block>
+                                                </fo:table-cell>
+                                            </fo:table-row>
+                                        </fo:table-header>
+                                        <fo:table-body>
+                                            #foreach($item in $data.itemLines)
+                                            <fo:table-row border="solid 0.5px black">
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$foreach.count</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>#writeString($item.itemName)</fo:block>
+                                                    <fo:block>HSN Code: #writeString($item.hsnId)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>#writeString($item.vendorSku)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$item.quantity</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $item.baseSellingPricePerUnit)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $item.discount)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $item.baseSellingPriceTotal)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $item.netTaxAmountTotal)</fo:block>
+                                                    #if($data.totalIgstAmount == 0)
+                                                      <fo:block>($math.roundTo(1, $item.cgstRate)% + $math.roundTo(1, $item.sgstRate)%)</fo:block>
+                                                    #else
+                                                      <fo:block>($math.roundTo(1, $item.igstRate)%)</fo:block>
+                                                    #end
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $item.actualSellingPriceTotal)</fo:block>
+                                                </fo:table-cell>
+                                            </fo:table-row>
+                                            #end
+                                            <fo:table-row border="solid 0.5px black" font-weight="bold">
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block></fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>Total:</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block></fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block></fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block></fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block></fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $data.finalBaseAmount)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $data.finalTaxAmount)</fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell border="solid 0.5px black">
+                                                    <fo:block>$math.roundTo(2, $data.finalTotalAmount)</fo:block>
+                                                </fo:table-cell>
+                                            </fo:table-row>
+                                        </fo:table-body>
+                                    </fo:table>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%" border="solid 0.5px black">
+                        <fo:table-column column-width="proportional-column-width(60)"/>
+                        <fo:table-column column-width="proportional-column-width(40)"/>
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell text-align="left" padding="3pt">
+                                    <fo:block font-size="12pt">
+                                        Amount Chargeable(in words):
+                                    </fo:block>
+                                    <fo:block font-size="12pt" font-weight="bold" padding-before="2pt">
+                                        INR $data.totalAmountInWords $data.primaryCurrencyUnit and $data.totalAmountCents $data.secondaryCurrencyUnit only
+                                    </fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell text-align="right">
+                                    <fo:block>E. &amp; O.E</fo:block>
+                                    <fo:block font-weight="bold">Tax Payable on reverse charge basis: No</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block text-decoration="underline">
+                                        Declaration
+                                    </fo:block>
+                                    <fo:block>
+                                        1. All claims, if any, for shortages or damages must be reported to customer service on the day of delivery through the contact us page on the web store 2. All Disputes are subject to Haryana (06) jurisdiction only. 3. At Aramya we try to deliver perfectly each and every time. But in the off-chance that you need to return the item, please do so with the original packing, price tag and invoice without which it will be really difficult for us to act on your request. Please help us in helping you. Terms and conditions apply. 4. The goods sold as are intended for end user consumption and not for re-sale.
+                                    </fo:block>
+                                </fo:table-cell>
+
+                                <fo:table-cell text-align="center" display-align="center" border="solid 0.5px black" padding="5pt">
+                                    <fo:block font-weight="bold">
+                                        For #writeString($data.fromPartyName)
+                                    </fo:block>
+                                    <fo:block>
+                                        #if($data.signatureUrl)
+                                            <fo:external-graphic content-height="15mm"
+                                                                content-width="15mm"
+                                                                scaling="uniform"
+                                                                padding-left="2pt"
+                                                                src="url('$data.signatureUrl')">
+                                            </fo:external-graphic>
+                                        #end
+                                        #if($data.stampUrl)
+                                            <fo:external-graphic content-height="15mm"
+                                                                content-width="15mm"
+                                                                scaling="uniform"
+                                                                padding-left="2pt"
+                                                                src="url('$data.stampUrl')">
+                                            </fo:external-graphic>
+                                        #end
+                                    </fo:block>
+                                    <fo:block>
+                                        Authorised Signatory
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
+
+#macro(writeImageUrl $invoiceCancelled)
+    #set($cancelledUrl='classpath:com/nextscm/commons/images/cancelled_image_1.jpg')
+    #set($nonCancelledUrl='classpath:com/nextscm/commons/images/cancelled_image_2.jpg')
+    #if($invoiceCancelled == true)
+        $cancelledUrl
+    #else
+        $nonCancelledUrl
+    #end
+#end
+
+
+#macro( writeAddress $add)
+  #if($add)
+  <fo:block>#writeString($add.name)</fo:block>
+  <fo:block>#writeString($add.line1)</fo:block>
+  <fo:block>#writeString($add.line2)</fo:block>
+  <fo:block>
+    #if($add.city)
+      #writeString($add.city),
+    #end
+    #writeString($add.state)
+    #if($add.stateCode)
+     -
+     #writeString($add.stateCode)
+    #end
+  </fo:block>
+
+  <fo:block>
+    #if($add.country)
+      #writeString($add.country),
+    #end
+    #writeString($add.zip)
+  </fo:block>
+  <fo:block>#writeString($add.phone)</fo:block>
+  <fo:block></fo:block>
+  #end
+#end
+
+#macro( writeEmail $add)
+  <fo:block>
+       #writeString($add.email)
+  </fo:block>
+#end
+
+#macro( writeTaxItems $subTaxItemData)
+  #if($subTaxItemData)
+    #foreach($taxItem in $subTaxItemData)
+    |#writeString($taxItem.type): $math.roundTo(2, $taxItem.rate)
+    #end
+  |
+  #end
+#end
+
+#macro( writeTaxItemsData $subTaxItemData)
+  #if($subTaxItemData)
+    #foreach($taxItem in $subTaxItemData)
+    |#writeString($taxItem.type): $math.roundTo(2, $taxItem.subTaxTotal)
+    #end
+   |
+  #end
+#end
+
+
+#macro( writeString $str)
+  #if($str)
+  <![CDATA[$str]]>
+  #end
+#end
+
+#macro( writeBarcodeWithoutText $str)
+  #if($str.toString().contains("&"))
+    #set( $str = $str.replace("&", "&amp;") )
+  #end
+  #if($str.toString().contains("<"))
+    #set( $str = $str.replace("<", "&lt;") )
+  #end
+  #if($str.toString().contains(">"))
+    #set( $str = $str.replace(">", "&gt;") )
+  #end
+  #if($str.toString().contains("'"))
+    #set( $str = $str.replace("'", "&apos;") )
+  #end
+  #if($str.toString().contains('"'))
+    #set( $str = $str.replace('"', "&quot;") )
+  #end
+  #if($str)
+  <fo:instream-foreign-object>
+    <bc:barcode xmlns:bc="http://barcode4j.krysalis.org/ns"
+                message="$str">
+      <bc:code128>
+        <bc:height>10mm</bc:height>
+        <human-readable>
+          <placement>none</placement>
+        </human-readable>
+      </bc:code128>
+    </bc:barcode>
+  </fo:instream-foreign-object>
+  #end
+#end
+
+#macro( writeDateTime $dateTime)
+  #if($dateTime)
+    $date.format('dd MMM yyyy, hh:mm a', $dateTime)
+  #end
+#end
+
+#macro( writeCustomDateTime $dateTime)
+  #if($dateTime)
+    $date.format('dd-MMMMM-yyyy', $dateTime)
+  #end
+#end
