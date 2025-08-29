@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Backend service URL
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8890/velocity-engine-app';
 
-export default async function handler(req, res) {
+export async function GET() {
   try {
     console.log('Fetching templates from backend...');
     const url = `${BACKEND_URL}/api/templates`;
@@ -13,12 +14,15 @@ export default async function handler(req, res) {
     console.log('Templates response:', response.data);
     
     // Return the template names as an array
-    res.status(200).json(response.data);
-  } catch (error) {
+    return NextResponse.json(response.data);
+  } catch (error: any) {
     console.error('Error fetching templates:', error);
-    res.status(error.response?.status || 500).json({ 
-      error: 'Failed to fetch templates',
-      details: error.message
-    });
+    return NextResponse.json(
+      { 
+        error: 'Failed to fetch templates',
+        details: error.message
+      },
+      { status: error.response?.status || 500 }
+    );
   }
 } 

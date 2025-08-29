@@ -1,19 +1,20 @@
 import axios from 'axios';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Backend service URL
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8890/velocity-engine-app';
 
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function GET(request: NextRequest) {
   try {
     // Get the template name from the query
-    const { templateName } = req.query;
+    const { searchParams } = new URL(request.url);
+    const templateName = searchParams.get('templateName');
     
     if (!templateName) {
-      return res.status(400).json({ error: 'Template name is required' });
+      return NextResponse.json(
+        { error: 'Template name is required' },
+        { status: 400 }
+      );
     }
 
     console.log(`Fetching template content for: ${templateName}`);
@@ -27,12 +28,15 @@ export default async function handler(req, res) {
     const response = await axios.get(url);
     
     // Return the template content
-    res.status(200).json({ content: response.data });
-  } catch (error) {
+    return NextResponse.json({ content: response.data });
+  } catch (error: any) {
     console.error('Error fetching template content:', error);
-    res.status(error.response?.status || 500).json({ 
-      error: 'Failed to fetch template content',
-      details: error.message
-    });
+    return NextResponse.json(
+      { 
+        error: 'Failed to fetch template content',
+        details: error.message
+      },
+      { status: error.response?.status || 500 }
+    );
   }
 } 

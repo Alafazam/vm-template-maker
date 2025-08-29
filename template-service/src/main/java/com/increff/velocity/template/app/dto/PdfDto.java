@@ -18,6 +18,7 @@ import org.apache.fop.configuration.ConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,29 +31,64 @@ public class PdfDto {
     private ObjectMapper objectMapper;
 
     public byte[] renderPdf(MultipartFile file, String jsonString) throws ApiException, JsonProcessingException {
+        System.out.println("=== PDF RENDER FLOW START ===");
+        System.out.println("Input JSON string length: " + (jsonString != null ? jsonString.length() : "null"));
+        System.out.println("Input JSON string: " + jsonString);
+        System.out.println("File name: " + (file != null ? file.getOriginalFilename() : "null"));
+        System.out.println("File size: " + (file != null ? file.getSize() : "null"));
+        
         Object form = convertToObject(jsonString);
+        System.out.println("Converted form object type: " + (form != null ? form.getClass().getName() : "null"));
+        System.out.println("Converted form object: " + form);
+        
         convertDateFields(form);
+        System.out.println("After date conversion, form object: " + form);
+        
         String timeZoneStr = "Asia/Kolkata";
+        System.out.println("Using timezone: " + timeZoneStr);
+        
         String templateResource = null;
         try {
-            templateResource = new String(file.getBytes());
+            templateResource = new String(file.getBytes(), StandardCharsets.UTF_8);
+            System.out.println("Template resource length: " + (templateResource != null ? templateResource.length() : "null"));
+            System.out.println("Template resource (first 200 chars): " + 
+                (templateResource != null ? templateResource.substring(0, Math.min(200, templateResource.length())) : "null"));
         } catch (IOException e) {
+            System.out.println("ERROR reading file: " + e.getMessage());
             throw new ApiException(ApiStatus.UNKNOWN_ERROR, "Error while reading the file, message: " + e.getMessage());
         }
         try {
-            return getPdfFromVm(form, templateResource, timeZoneStr);
+            System.out.println("Calling getPdfFromVm...");
+            byte[] result = getPdfFromVm(form, templateResource, timeZoneStr);
+            System.out.println("PDF generation successful, result size: " + (result != null ? result.length : "null"));
+            System.out.println("=== PDF RENDER FLOW END ===");
+            return result;
         } catch (ApiException e) {
+            System.out.println("ERROR in getPdfFromVm: " + e.getMessage());
             throw new ApiException(ApiStatus.UNKNOWN_ERROR, "Error while generating the PDF, message: " + e.getMessage());
         }
     }
     
     public byte[] renderPdfFromString(String templateContent, String jsonString) throws ApiException, JsonProcessingException {
+        System.out.println("=== PDF RENDER FROM STRING FLOW START ===");
+        System.out.println("Template content length: " + (templateContent != null ? templateContent.length() : "null"));
+        System.out.println("Template content (first 200 chars): " + 
+            (templateContent != null ? templateContent.substring(0, Math.min(200, templateContent.length())) : "null"));
+        System.out.println("JSON string: " + jsonString);
+        
         Object form = convertToObject(jsonString);
+        System.out.println("Converted form object: " + form);
+        
         convertDateFields(form);
+        System.out.println("After date conversion: " + form);
+        
         String timeZoneStr = "Asia/Kolkata";
         try {
-            return getPdfFromVm(form, templateContent, timeZoneStr);
+            byte[] result = getPdfFromVm(form, templateContent, timeZoneStr);
+            System.out.println("=== PDF RENDER FROM STRING FLOW END ===");
+            return result;
         } catch (ApiException e) {
+            System.out.println("ERROR in renderPdfFromString: " + e.getMessage());
             throw new ApiException(ApiStatus.UNKNOWN_ERROR, "Error while generating the PDF, message: " + e.getMessage());
         }
     }
@@ -61,7 +97,32 @@ public class PdfDto {
         VelocityUtil.setTimezone(timeZoneStr);
         String fopTemplate = null;
         try {
+            // Debug: Print the form data
+            System.out.println("=== DEBUG: PDF Generation ===");
+            System.out.println("Form data type: " + (form != null ? form.getClass().getName() : "null"));
+            System.out.println("Form data: " + form);
+            
             fopTemplate = VelocityUtil.processString(form, templateResource);
+            
+            // Debug: Print the processed template (first 500 chars)
+            System.out.println("Processed template (first 500 chars): " + 
+                (fopTemplate != null ? fopTemplate.substring(0, Math.min(500, fopTemplate.length())) : "null"));
+            
+            // Debug: Check for Arabic characters in the template
+            if (fopTemplate != null && fopTemplate.contains("حسين")) {
+                System.out.println("Arabic text found in template: حسين");
+            } else {
+                System.out.println("No Arabic text found in template");
+            }
+            
+            // Debug: Check for Arabic characters in the form data
+            if (form != null && form.toString().contains("حسين")) {
+                System.out.println("Arabic text found in form data: حسين");
+            } else {
+                System.out.println("No Arabic text found in form data");
+            }
+            
+            System.out.println("=== END DEBUG ===");
         }
         catch (ParseException e) {
             throw new ApiException(ApiStatus.UNKNOWN_ERROR,"Error while processing template, message: " + e.getMessage());
@@ -76,11 +137,21 @@ public class PdfDto {
     }
 
     private Object convertToObject(String jsonString) throws JsonProcessingException {
-        return objectMapper.readValue(jsonString, Object.class);
+        System.out.println("=== CONVERT TO OBJECT ===");
+        System.out.println("Input JSON string: " + jsonString);
+        Object result = objectMapper.readValue(jsonString, Object.class);
+        System.out.println("Converted object type: " + (result != null ? result.getClass().getName() : "null"));
+        System.out.println("Converted object: " + result);
+        System.out.println("=== END CONVERT TO OBJECT ===");
+        return result;
     }
 
     public static void convertDateFields(Object jsonObject) {
+        System.out.println("=== CONVERT DATE FIELDS START ===");
+        System.out.println("Input object: " + jsonObject);
         convertDateFieldsRecursive(jsonObject);
+        System.out.println("After date conversion: " + jsonObject);
+        System.out.println("=== CONVERT DATE FIELDS END ===");
     }
 
     private static void convertDateFieldsRecursive(Object obj) {

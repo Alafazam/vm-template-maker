@@ -8,13 +8,17 @@ import StepIndicator from '../components/StepIndicator';
 import TemplateModification from '../components/TemplateModification';
 import TemplateFileUpload from '../components/TemplateFileUpload';
 import FileDownload from '../components/FileDownload';
+import JsonDataSelector from '../components/JsonDataSelector';
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [userPrompt, setUserPrompt] = useState('');
   const [templateFile, setTemplateFile] = useState<File | null>(null);
+  const [templateContent, setTemplateContent] = useState<string | null>(null);
   const [modifiedFile, setModifiedFile] = useState<File | null>(null);
+  const [selectedDataType, setSelectedDataType] = useState<string>('invoice');
+  const [jsonData, setJsonData] = useState<string>('');
   
   // Try to restore state from local storage on component mount
   useEffect(() => {
@@ -55,7 +59,9 @@ export default function Home() {
     }
   };
   
-  const handleModificationComplete = (modifiedFile: File, analysis: any) => {
+  const handleModificationComplete = (modifiedTemplate: string, analysis: any) => {
+    // Convert the string back to a File object
+    const modifiedFile = new File([modifiedTemplate], 'modified-template.xml', { type: 'text/xml' });
     setModifiedFile(modifiedFile);
     console.log('Template modified. Tokens used:', analysis);
     goToNextStep();
@@ -64,6 +70,15 @@ export default function Home() {
   const handleFileSelected = (file: File) => {
     console.log('Template file selected:', file.name);
     setTemplateFile(file);
+    
+    // Read the file content
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setTemplateContent(content);
+      console.log('Template content loaded, length:', content.length);
+    };
+    reader.readAsText(file);
     
     // When selecting a template, also store the selected template name
     if (selectedTemplate) {
@@ -146,7 +161,7 @@ export default function Home() {
               
               <div className="mt-6">
                 <TemplateModification
-                  templateFile={templateFile}
+                  templateContent={templateFile ? null : null}
                   prompt={userPrompt}
                   onModificationComplete={handleModificationComplete}
                 />
@@ -165,10 +180,15 @@ export default function Home() {
           
           {currentStep === 3 && (
             <div>
+              <JsonDataSelector
+                selectedDataType={selectedDataType}
+                onDataTypeChange={setSelectedDataType}
+              />
               <PdfPreview
                 selectedTemplate={selectedTemplate}
                 userPrompt={userPrompt}
-                templateFile={modifiedFile}
+                templateFile={modifiedFile || templateFile}
+                jsonData={jsonData}
                 onBack={goToPreviousStep}
               />
               

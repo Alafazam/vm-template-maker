@@ -26,7 +26,11 @@ public class TemplateController {
     @GetMapping("")
     @ApiOperation(value = "Get all available templates")
     public List<String> getAllTemplates() {
-        return templateDto.getAllTemplates();
+        System.out.println("=== CONTROLLER: GET ALL TEMPLATES ===");
+        List<String> templates = templateDto.getAllTemplates();
+        System.out.println("Found " + templates.size() + " templates: " + templates);
+        System.out.println("=== END GET ALL TEMPLATES ===");
+        return templates;
     }
     
     @GetMapping("/info")
@@ -38,10 +42,17 @@ public class TemplateController {
     @GetMapping("/{templateName}/content")
     @ApiOperation(value = "Get the content of a specific template")
     public ResponseEntity<String> getTemplateContent(@PathVariable("templateName") String templateName) {
+        System.out.println("=== CONTROLLER: GET TEMPLATE CONTENT ===");
+        System.out.println("Template name: " + templateName);
         try {
             String content = templateDto.getTemplateContent(templateName);
+            System.out.println("Template content length: " + (content != null ? content.length() : "null"));
+            System.out.println("Template content (first 200 chars): " + 
+                (content != null ? content.substring(0, Math.min(200, content.length())) : "null"));
+            System.out.println("=== END GET TEMPLATE CONTENT ===");
             return ResponseEntity.ok(content);
         } catch (IOException e) {
+            System.out.println("ERROR getting template content: " + e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

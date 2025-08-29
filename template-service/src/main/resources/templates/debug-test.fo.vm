@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml"
+              standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root language="EN" font-size="12pt" font-family="arial">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master"
+                               page-height="297mm" page-width="210mm" margin-top="10mm"
+                               margin-bottom="10mm" margin-left="10mm" margin-right="10mm">
+          <fo:region-body region-name="body"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+        <fo:flow flow-name="body">
+          <fo:block font-size="16pt" font-weight="bold">Debug Test</fo:block>
+          <fo:block>Raw data object: $data</fo:block>
+          <fo:block>Vendor Name: $data.vendorName</fo:block>
+          <fo:block>Invoice Number: $data.invoiceOrStockTransferNo</fo:block>
+          <fo:block>Currency: $data.currency</fo:block>
+          <fo:block>Order Number: $data.orderNo</fo:block>
+          <fo:block>From Party: $data.fromPartyName</fo:block>
+          <fo:block>To Party: $data.toPartyName</fo:block>
+          <fo:block>Total Amount: $data.finalTotalAmount</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet> 

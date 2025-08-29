@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+  <xsl:output encoding="UTF-8" indent="yes" method="xml" standalone="no" omit-xml-declaration="no"/>
+  <xsl:template match="data">
+    <fo:root font-size="12pt" font-family="Arial Unicode MS, Arial, Times New Roman, sans-serif">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page-master" page-height="297mm" page-width="210mm" margin="10mm">
+          <fo:region-body region-name="body"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page-master">
+        <fo:flow flow-name="body">
+          <fo:block>Test English Text</fo:block>
+          <fo:block font-family="Arial Unicode MS, Arial, Times New Roman" xml:lang="ar" script="arab">Test Arabic Text: حسين عبدالله</fo:block>
+          <fo:block>Name from data: <fo:inline font-family="Arial Unicode MS, Arial, Times New Roman" xml:lang="ar" script="arab">#writeString($data.toAddress.firstName)</fo:inline></fo:block>
+          <fo:block>Full name: <fo:inline font-family="Arial Unicode MS, Arial, Times New Roman" xml:lang="ar" script="arab">#writeString($data.toAddress.firstName)</fo:inline> #writeString($data.toAddress.lastName)</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
+
+#macro(writeString $str)
+#if($str)
+<![CDATA[$str]]>
+#end
+#end 

@@ -38,8 +38,16 @@ public class PdfController {
     @ApiOperation(value = "Render PDF from template and JSON data")
     public String renderPdf(@RequestParam("file") MultipartFile file,
                             @RequestParam("jsonString") String jsonString) throws ApiException, JsonProcessingException {
+        System.out.println("=== CONTROLLER: RENDER PDF START ===");
+        System.out.println("File name: " + (file != null ? file.getOriginalFilename() : "null"));
+        System.out.println("JSON string: " + jsonString);
+        
         byte[] result = pdfDto.renderPdf(file, jsonString);
-        return Base64.getEncoder().encodeToString(result);
+        System.out.println("Result size: " + (result != null ? result.length : "null"));
+        
+        String base64Result = Base64.getEncoder().encodeToString(result);
+        System.out.println("=== CONTROLLER: RENDER PDF END ===");
+        return base64Result;
     }
     
     @PostMapping("/template-upload")
@@ -48,25 +56,41 @@ public class PdfController {
             @RequestParam("templateFile") MultipartFile templateFile,
             @RequestParam("jsonData") String jsonData) throws ApiException, JsonProcessingException {
         
+        System.out.println("=== CONTROLLER: TEMPLATE UPLOAD START ===");
+        System.out.println("Template file name: " + (templateFile != null ? templateFile.getOriginalFilename() : "null"));
+        System.out.println("Template file size: " + (templateFile != null ? templateFile.getSize() : "null"));
+        System.out.println("JSON data length: " + (jsonData != null ? jsonData.length() : "null"));
+        System.out.println("JSON data: " + jsonData);
+        
         // Validate inputs
         if (templateFile == null || templateFile.isEmpty()) {
+            System.out.println("ERROR: Template file is null or empty");
             throw new ApiException(ApiStatus.UNKNOWN_ERROR, "Template file is required");
         }
         
         if (jsonData == null || jsonData.isEmpty()) {
+            System.out.println("ERROR: JSON data is null or empty");
             throw new ApiException(ApiStatus.UNKNOWN_ERROR, "JSON data is required");
         }
         
         // Validate JSON
         try {
             objectMapper.readTree(jsonData);
+            System.out.println("JSON validation successful");
         } catch (JsonProcessingException e) {
+            System.out.println("ERROR: Invalid JSON - " + e.getMessage());
             throw new ApiException(ApiStatus.UNKNOWN_ERROR, "Invalid JSON data: " + e.getMessage());
         }
         
         // Render PDF using the uploaded template
+        System.out.println("Calling pdfDto.renderPdf...");
         byte[] result = pdfDto.renderPdf(templateFile, jsonData);
-        return Base64.getEncoder().encodeToString(result);
+        System.out.println("PDF generation result size: " + (result != null ? result.length : "null"));
+        
+        String base64Result = Base64.getEncoder().encodeToString(result);
+        System.out.println("Base64 result length: " + base64Result.length());
+        System.out.println("=== CONTROLLER: TEMPLATE UPLOAD END ===");
+        return base64Result;
     }
     
     @PostMapping("/sample/{templateType}")

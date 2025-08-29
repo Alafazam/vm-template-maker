@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<fop version="1.0">
+  <strict-configuration>false</strict-configuration>
+  <strict-validation>false</strict-validation>
+  <base>.</base>
+
+  <renderers>
+    <renderer mime="application/pdf">
+      <fonts>
+        <!-- Enable auto-detection of fonts -->
+        <auto-detect/>
+        
+        <!-- Explicitly register system fonts that support Arabic -->
+        <font kerning="yes" embedding-mode="subset">
+          <font-triplet name="Times New Roman" style="normal" weight="normal"/>
+        </font>
+        <font kerning="yes" embedding-mode="subset">
+          <font-triplet name="Arial" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop> 

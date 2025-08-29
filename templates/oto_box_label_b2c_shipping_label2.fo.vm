@@ -4,12 +4,12 @@
     xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
     <xsl:output encoding="UTF-8" indent="yes" method="xml" standalone="no" omit-xml-declaration="no"/>
     <xsl:template match="data">
-        <fo:root language="EN" font-size="8pt" font-family="Arial, Times New Roman, sans-serif" xml:lang="en">
+        <fo:root language="EN" font-size="8pt" font-family="arial">
             <fo:layout-master-set>
                 <fo:simple-page-master master-name="page-master" page-height="152.4mm" page-width="101.6mm" margin-top="3mm" margin-bottom="5mm" margin-left="5mm" margin-right="5mm">
                     <fo:region-body region-name="body"/>
                     <fo:region-before region-name="header" extent="5mm" margin-bottom="0mm" margin-top="0mm" display-align="before" precedence="true"/>
-                    <fo:region-after region-name="footer" extent="5mm" margin-bottom="0mm" margin-top="0mm"/>
+                    <fo:region-after region-name="footer" extent="2mm" margin-bottom="0mm" margin-top="0mm"/>
                 </fo:simple-page-master>
             </fo:layout-master-set>
             <fo:page-sequence master-reference="page-master">
@@ -36,7 +36,7 @@
                         <fo:table-column column-width="proportional-column-width(30)"/>
                         <fo:table-column column-width="proportional-column-width(70)"/>
                         <fo:table-body>
-                            <fo:table-row font-size="8pt" border="solid 0.5px black"> 
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
                                 <fo:table-cell>
                                     <fo:block></fo:block>
                                 </fo:table-cell>
@@ -53,12 +53,12 @@
                         <fo:table-body>
                             <fo:table-row font-size="10pt" text-align="center" border-top="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
                                 <fo:table-cell padding="2pt">
-                                    <fo:block>#writeBarcodeWithoutText($data.awbNo)</fo:block>
+                                    <fo:block>#writeBarcodeWithoutTextV3($data.awbNo)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
-                            <fo:table-row font-size="8pt" text-align="center" border-bottom="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
-                                <fo:table-cell padding="2pt">
-                                    <fo:block>#writeString($data.awbNo)</fo:block>
+                            <fo:table-row font-size="12pt" text-align="center" border-bottom="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
+                                <fo:table-cell>
+                                    <fo:block>#writeFormattedStringV3($data.awbNo)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
@@ -69,7 +69,7 @@
                         <fo:table-body>
                             <fo:table-row font-size="8pt" border="solid 0.5px black">
                                 <fo:table-cell border-right="solid 0.5px black" padding="2pt">
-                                    <fo:block>Order No : #writeString($data.orderNo)</fo:block>
+                                    <fo:block>Order No : #writeFormattedStringV3($data.orderNo)</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell padding="2pt">
                                     <fo:block>Order Date : #writeDateTime($data.orderDate)</fo:block>
@@ -96,12 +96,12 @@
                                     <fo:block>Payment : #writePaymentMethod($data.paymentType)</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell padding="2pt">
-                                    <fo:block>Cash to be Collected : #writeString($data.codAmount) #writeString($data.currencyCode)</fo:block>
+                                    <fo:block>Cash to be Collected : #writeFormattedStringV3($data.codAmount) #writeFormattedStringV3($data.currencyCode)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
                     </fo:table>
-                    <fo:table>
+                    <fo:table table-layout="fixed" width="100%">
                         <fo:table-column column-width="proportional-column-width(100)"/>
                         <fo:table-body>
                             <fo:table-row font-size="8pt" border="solid 0.5px black">
@@ -111,14 +111,14 @@
                             </fo:table-row>
                         </fo:table-body>
                     </fo:table>
-                    <fo:table>
+                    <fo:table table-layout="fixed" width="100%">
                         <fo:table-column column-width="proportional-column-width(100)"/>
                         <fo:table-body>
-                                                          <fo:table-row font-size="8pt" border="solid 0.5px black">
-                                  <fo:table-cell padding="2pt">
-                                      <fo:block font-family="Arial">حسين عبدالل</fo:block>
-                                  </fo:table-cell>
-                              </fo:table-row>
+                            <fo:table-row font-size="8pt" border="solid 0.5px black">
+                                <fo:table-cell padding="2pt">
+                                    <fo:block>#writeToAddress($data.toAddress)</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
                         </fo:table-body>
                     </fo:table>
                     <fo:table table-layout="fixed" width="100%">
@@ -128,13 +128,13 @@
                         <fo:table-body>
                             <fo:table-row font-size="8pt" border="solid 0.5px black">
                                 <fo:table-cell padding="2pt" border-right="solid 0.5px black">
-                                    <fo:block>Order Grand Total : #writeString($data.orderValue) #writeString($data.currencyCode)</fo:block>
+                                    <fo:block>Order Grand Total : #writeFormattedStringV3($data.orderValue) #writeFormattedStringV3($data.currencyCode)</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell padding="2pt" border-right="solid 0.5px black">
-                                    <fo:block>Total Weight : #writeString($data.shipmentWeight)</fo:block>
+                                    <fo:block>Total Weight : #writeFormattedStringV3($data.shipmentWeight)</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell padding="2pt">
-                                    <fo:block>Number of Pieces : #writeString($data.boxSerialNo) of #writeString($data.totalBoxCount)</fo:block>
+                                    <fo:block>Number of Pieces : #writeFormattedStringV3($data.boxSerialNo) of #writeFormattedStringV3($data.totalBoxCount)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
@@ -144,12 +144,12 @@
                         <fo:table-body>
                             <fo:table-row font-size="8pt" border="solid 0.5px black">
                                 <fo:table-cell padding="2pt">
-                                    <fo:block>Transporter Name : #writeString($data.transporterName)</fo:block>
+                                    <fo:block>Transporter Name : #writeFormattedStringV3($data.transporterName)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
                     </fo:table>
-                    <fo:table>
+                    <fo:table table-layout="fixed" width="100%">
                         <fo:table-column column-width="proportional-column-width(100)"/>
                         <fo:table-body>
                             <fo:table-row font-size="8pt" border="solid 0.5px black">
@@ -170,7 +170,7 @@
                                                 #set($is_first_name = false)
                                             #end
                                         #end
-                                        Item Names : $complete_item_string
+                                        Item Names : #writeFormattedStringV3($complete_item_string)
                                     </fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
@@ -182,12 +182,12 @@
                         <fo:table-body>
                             <fo:table-row font-size="10pt" text-align="center" border-top="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
                                 <fo:table-cell padding="2pt">
-                                    <fo:block>#writeBarcodeWithoutText($data.orderNo)</fo:block>
+                                    <fo:block>#writeBarcodeWithoutTextV3($data.awbNo)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
-                            <fo:table-row font-size="8pt" text-align="center" border-bottom="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
+                            <fo:table-row font-size="12pt" text-align="center" border-bottom="solid 0.5px black" border-left="solid 0.5px black" border-right="solid 0.5px black">
                                 <fo:table-cell>
-                                    <fo:block>#writeString($data.orderNo)</fo:block>
+                                    <fo:block>#writeFormattedStringV3($data.awbNo)</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
@@ -199,10 +199,10 @@
 </xsl:stylesheet>
 
 
-#macro( writeString $str)
-#if($str)
-<![CDATA[$str]]>
-#end
+#macro( writeFormattedStringV3 $str)
+  #if($str)
+    <![CDATA[$str]]>
+  #end
 #end
 
 #macro ( writePaymentMethod $str)
@@ -217,17 +217,17 @@ Paid
 
 #macro( writeFromAddress $add)
 #if($add)
-<fo:block>From/Sender : <fo:inline font-family="Arial Unicode MS, Arial, Times New Roman" xml:lang="ar" script="arab" font-size="8pt">#writeString($add.firstName)</fo:inline> #writeString($add.middleName) #writeString($add.lastName)</fo:block>
-<fo:block>Address: #writeString($add.street1), #writeString($add.street2), #writeString($add.street3), #writeString($add.city)</fo:block>
-<fo:block>Phone : #writeString($add.phone)</fo:block>
+<fo:block writing-mode="rl-tb"  language="ar" font-size="10pt">Sender Name: #writeFormattedStringV3($add.firstName) #writeFormattedStringV3($add.middleName) #writeFormattedStringV3($add.lastName)</fo:block>
+<fo:block writing-mode="rl-tb" font-family="arial" font-size="10pt">Address: #writeFormattedStringV3($add.street1), #writeFormattedStringV3($add.street2), #writeFormattedStringV3($add.street3), #writeFormattedStringV3($add.city)</fo:block>
+<fo:block font-family="arial" font-size="10pt">Phone : #writeFormattedStringV3($add.phone)</fo:block>
 #end
 #end
 
 #macro( writeToAddress $add)
 #if($add)
-<fo:block>To/Recipient : <fo:inline font-family="Arial Unicode MS, Arial, Times New Roman" xml:lang="ar" script="arab" font-size="8pt">#writeString($add.firstName)</fo:inline> #writeString($add.middleName) #writeString($add.lastName)</fo:block>
-<fo:block>Address: #writeString($add.street1), #writeString($add.street2), #writeString($add.street3), #writeString($add.city)</fo:block>
-<fo:block>Phone : #writeString($add.phone)</fo:block>
+<fo:block>To/Recipient : #writeFormattedStringV3($add.firstName) #writeFormattedStringV3($add.middleName) #writeFormattedStringV3($add.lastName)</fo:block>
+<fo:block>Address: #writeFormattedStringV3($add.street1), #writeFormattedStringV3($add.street2), #writeFormattedStringV3($add.street3), #writeFormattedStringV3($add.city)</fo:block>
+<fo:block>Phone : #writeFormattedStringV3($add.phone)</fo:block>
 #end
 #end
 
@@ -237,7 +237,7 @@ $date.format('dd/MM/yyyy', $dateTime)
 #end
 #end
 
-#macro( writeBarcodeWithoutText $str)
+#macro( writeBarcodeWithoutTextV3 $str)
   #if($str.toString().contains("&"))
   #set( $str = $str.replace("&", "&amp;") )
   #end
@@ -257,6 +257,7 @@ $date.format('dd/MM/yyyy', $dateTime)
 <fo:instream-foreign-object>
 <bc:barcode xmlns:bc="http://barcode4j.krysalis.org/ns" message="$str">
 <bc:code128>
+  <bc:module-width>0.5mm</bc:module-width>
   <bc:height>10mm</bc:height>
   <human-readable>
     <placement>none</placement>

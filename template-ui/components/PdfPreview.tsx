@@ -10,6 +10,8 @@ interface PdfPreviewProps {
   generatePdf?: boolean;
   onGenerateComplete?: () => void;
   hideTitle?: boolean;
+  templateFile?: File | null;
+  jsonData?: string;
 }
 
 // This would come from a database or API in a real app
@@ -32,7 +34,9 @@ const PdfPreview: React.FC<PdfPreviewProps> = ({
   simplified = false,
   generatePdf = false,
   onGenerateComplete,
-  hideTitle = false
+  hideTitle = false,
+  templateFile,
+  jsonData
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,13 +105,18 @@ const PdfPreview: React.FC<PdfPreviewProps> = ({
       // Store the current prompt in localStorage for reference
       localStorage.setItem('currentPrompt', userPrompt);
       
-      // Render the PDF using the template content directly
+      // Render the PDF using the template file and JSON data
+      const formData = new FormData();
+      if (templateFile) {
+        formData.append('templateFile', templateFile);
+      }
+      if (jsonData) {
+        formData.append('jsonData', jsonData);
+      }
+
       const response = await axios.post(
-        '/api/render',
-        {
-          templateName: selectedTemplate,
-          templateContent: content
-        },
+        '/api/generate-pdf',
+        formData,
         {
           responseType: 'arraybuffer'  // Important: Get binary data directly
         }
