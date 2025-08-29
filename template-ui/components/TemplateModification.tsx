@@ -77,7 +77,7 @@ const TemplateModification: React.FC<TemplateModificationProps> = ({
       formData.append('api_key', process.env.NEXT_PUBLIC_OPENAI_API_KEY || "");
       
       // Call API using FormData
-      const response = await axios.post('http://localhost:8000/api/modify-template', formData, {
+      const response = await axios.post('/api/modify-template', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
